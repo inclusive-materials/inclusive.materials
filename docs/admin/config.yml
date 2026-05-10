@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Borderless-Expeditions/inclusive.materials
   branch: main
-  base_url: https://sveltia-cms-auth.pages.dev
+  base_url: https://sveltia-cms-auth.inclusivematerials.workers.dev
   app_id: Ov23liwMN6HGCNEmaetv
 
 media_folder: "docs/photos"
