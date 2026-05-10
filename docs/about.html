@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Inclusive Materials</title>
+  <meta name="description" content="A Special Education teacher creating resources that make a real difference." />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="icon" type="image/svg+xml" href="./photos/favicon.svg" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAVBAR -->
+<header class="navbar">
+  <div class="navbar__inner">
+    <a href="./index.html" class="navbar__logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="#3DB08A"/><path d="M14 21s-7-4.5-7-9a4 4 0 0 1 7-2.65A4 4 0 0 1 21 12c0 4.5-7 9-7 9z" fill="white"/></svg>
+      Inclusive Materials
+    </a>
+    <button class="navbar__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar__nav" id="main-nav">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./blog.html">Blog</a></li>
+      <li class="navbar__dropdown" id="shopDropdown">
+        <button class="navbar__dropdown-toggle" aria-expanded="false">
+          Shop
+          <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="navbar__dropdown-menu">
+          <a href="./shop.html">All Resources</a>
+          <a href="./shop.html?cat=sped">SPED</a>
+          <a href="./shop.html?cat=ot">OT</a>
+          <a href="./shop.html?cat=speech">Speech &amp; Language</a>
+          <a href="./shop.html?cat=general">General Classroom</a>
+        </div>
+      </li>
+      <li><a href="./about.html" class="active">About</a></li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ PAGE HEADER -->
+<div class="page-header">
+  <h1>About</h1>
+  <p>A Special Education teacher creating resources that make a real difference.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ ABOUT SECTION -->
+<section class="about-section">
+  <div class="container">
+    <div class="about-grid">
+
+      <!-- Main about card -->
+      <div class="about-card">
+        <div class="about-card__header">
+          <div class="about-card__logo-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="3" width="22" height="22" rx="5" stroke="currentColor" stroke-width="1.5"/><path d="M9 14h10M14 9v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <h2>Inclusive Materials</h2>
+            <span>Special Education Resources</span>
+          </div>
+        </div>
+        <p>
+          At Inclusive Materials, we specialize in creating evidence-informed educational resources
+          designed to support diverse learners and the professionals who work with them.
+        </p>
+        <p>
+          We understand firsthand how the right tools can transform a student's learning experience.
+          That's why we develop practical, accessible materials — from IEP templates and behavior
+          intervention plans to activity packs and visual supports — designed specifically for Special
+          Education specialists, OTs, SLPs, and educators working in inclusive settings.
+        </p>
+        <p>
+          Our mission is simple: to provide high-quality, ready-to-use resources that help educators
+          do what they do best — support every learner in reaching their full potential.
+        </p>
+      </div>
+
+      <!-- Right column info cards -->
+      <div class="about-right">
+
+        <div class="info-card">
+          <div class="info-card__header">
+            <div class="info-card__icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="10" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="10" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/><rect x="10" y="10" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3"/></svg>
+            </div>
+            <h3>Our Work</h3>
+          </div>
+          <ul>
+            <li>Creating evidence-informed educational resources</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card__header">
+            <div class="info-card__icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L2 5.5v5C2 13.7 5 16.5 9 17c4-0.5 7-3.3 7-6.5v-5L9 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>Who We Serve</h3>
+          </div>
+          <ul>
+            <li>Special Education Specialists, OTs, SLPs, and Educators</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card__header">
+            <h3 style="font-family:var(--font-body);font-size:0.95rem;font-weight:700;">Focus Areas</h3>
+          </div>
+          <div class="focus-tags">
+            <span class="tag">Fine Motor Skills</span>
+            <span class="tag">IEP Development</span>
+            <span class="tag">Behavior Support</span>
+            <span class="tag">Visual Supports</span>
+            <span class="tag">Adapted Curriculum</span>
+            <span class="tag">Sensory Strategies</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CTA BANNER -->
+<section class="cta-banner">
+  <div class="container">
+    <h2>Want to work together?</h2>
+    <p>Have a collaboration idea or question? I'd love to hear from you.</p>
+    <div class="cta-banner__actions">
+      <a href="./contact.html" class="btn btn--white">Get in Touch →</a>
+      <a href="./shop.html" class="btn btn--ghost-white">Browse Resources</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <div class="footer__brand-logo">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="#3DB08A"/><path d="M14 21s-7-4.5-7-9a4 4 0 0 1 7-2.65A4 4 0 0 1 21 12c0 4.5-7 9-7 9z" fill="white"/></svg>
+        Inclusive Materials
+      </div>
+      <p>Evidence-informed tools. Quality resources. Real results.<br/>Designed for OT, SLP, Special Education, and General Education.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul class="footer__links">
+        <li><a href="./blog.html">Blog</a></li>
+        <li><a href="./shop.html">Shop</a></li>
+        <li><a href="./about.html">About</a></li>
+        <li><a href="./contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__mission">
+      <h4>Mission</h4>
+      <p>Creating accessible, practical resources that empower educators and therapists to help every learner thrive.</p>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Inclusive Materials. All rights reserved.</span>
+    <span>Made with care for educators, by educators.</span>
+  </div>
+</footer>
+
+<script src="./main.js"></script>
+</body>
+</html>

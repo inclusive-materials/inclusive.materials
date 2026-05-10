@@ -1,0 +1,131 @@
+backend:
+  name: github
+  repo: Borderless-Expeditions/inclusive.materials
+  branch: main
+  base_url: https://sveltia-cms-auth.pages.dev
+  app_id: Ov23liwMN6HGCNEmaetv
+
+media_folder: "docs/photos"
+public_folder: "./photos"
+
+# ─────────────────────────────────────────────
+# SITE SETTINGS — controls index.html content
+# ─────────────────────────────────────────────
+collections:
+
+  - name: "site_settings"
+    label: "🏠 Home Page"
+    files:
+
+      - name: "homepage"
+        label: "Home Page Content"
+        file: "docs/_data/homepage.json"
+        fields:
+
+          # Hero Section
+          - label: "Hero — Tag Line (top small text)"
+            name: "hero_tagline"
+            widget: "string"
+            default: "For OT, SLP, SPED & General Education"
+
+          - label: "Hero — Main Title"
+            name: "hero_title"
+            widget: "string"
+            default: "Inclusive Materials"
+
+          - label: "Hero — Subtitle"
+            name: "hero_subtitle"
+            widget: "string"
+            default: "Evidence-informed tools. Quality resources. Real results."
+
+          - label: "Hero — Description"
+            name: "hero_description"
+            widget: "text"
+            default: "I'm a Special Education teacher creating practical, research-backed resources for educators and therapists. From visual supports and behavior intervention plans to fine motor worksheets and adapted assessments, everything here is designed to help every learner thrive."
+
+          # Category Pills
+          - label: "Category Pills"
+            name: "categories"
+            widget: "list"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Description", name: "description", widget: "string" }
+
+          # What I Create Section
+          - label: "What I Create — Section Title"
+            name: "what_i_create_title"
+            widget: "string"
+            default: "What I Create"
+
+          - label: "What I Create — Description"
+            name: "what_i_create_description"
+            widget: "text"
+            default: "Practical resources born from real classroom experience, designed for the professionals who use them every day."
+
+  # ─────────────────────────────────────────────
+  # FEATURED RESOURCES (Shop items on home page)
+  # ─────────────────────────────────────────────
+  - name: "featured_resources"
+    label: "⭐ Featured Resources"
+    folder: "docs/_data/resources"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Short Description", name: "description", widget: "text" }
+      - { label: "Price", name: "price", widget: "string", hint: "e.g. $4.99" }
+      - { label: "Badge", name: "badge", widget: "string", default: "Featured", required: false }
+      - { label: "Cover Image", name: "image", widget: "image", required: false }
+      - { label: "Shop Link / URL", name: "url", widget: "string", default: "./shop.html" }
+      - { label: "Featured on Homepage", name: "featured", widget: "boolean", default: true }
+
+  # ─────────────────────────────────────────────
+  # BLOG ARTICLES
+  # ─────────────────────────────────────────────
+  - name: "blog"
+    label: "📝 Blog Articles"
+    folder: "docs/_data/blog"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Summary", name: "summary", widget: "text" }
+      - { label: "Cover Image", name: "image", widget: "image", required: false }
+      - { label: "Full Article Body", name: "body", widget: "markdown" }
+      - { label: "Published", name: "published", widget: "boolean", default: true }
+
+  # ─────────────────────────────────────────────
+  # ABOUT / BIO
+  # ─────────────────────────────────────────────
+  - name: "about"
+    label: "👩‍🏫 About Page"
+    files:
+      - name: "about"
+        label: "About Content"
+        file: "docs/_data/about.json"
+        fields:
+          - { label: "Your Name", name: "name", widget: "string" }
+          - { label: "Your Title / Role", name: "role", widget: "string", default: "Special Education Teacher" }
+          - { label: "Bio (short)", name: "bio_short", widget: "text" }
+          - { label: "Bio (full)", name: "bio_full", widget: "markdown" }
+          - { label: "Profile Photo", name: "photo", widget: "image", required: false }
+          - { label: "Years of Experience", name: "years_experience", widget: "string", required: false }
+
+  # ─────────────────────────────────────────────
+  # CONTACT INFO
+  # ─────────────────────────────────────────────
+  - name: "contact"
+    label: "📬 Contact Info"
+    files:
+      - name: "contact"
+        label: "Contact Details"
+        file: "docs/_data/contact.json"
+        fields:
+          - { label: "Email Address", name: "email", widget: "string", default: "hello@inclusivematerials.com" }
+          - { label: "Contact Page Heading", name: "heading", widget: "string", default: "Get in Touch" }
+          - { label: "Contact Page Intro Text", name: "intro", widget: "text" }
+          - { label: "Social — Instagram URL", name: "instagram", widget: "string", required: false }
+          - { label: "Social — Facebook URL", name: "facebook", widget: "string", required: false }
+          - { label: "Social — Pinterest URL", name: "pinterest", widget: "string", required: false }
+

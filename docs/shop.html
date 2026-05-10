@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — Inclusive Materials</title>
+  <meta name="description" content="Printable resources, activity packs, and tools you can download and use right away." />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="icon" type="image/svg+xml" href="./photos/favicon.svg" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAVBAR -->
+<header class="navbar">
+  <div class="navbar__inner">
+    <a href="./index.html" class="navbar__logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="#3DB08A"/><path d="M14 21s-7-4.5-7-9a4 4 0 0 1 7-2.65A4 4 0 0 1 21 12c0 4.5-7 9-7 9z" fill="white"/></svg>
+      Inclusive Materials
+    </a>
+    <button class="navbar__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar__nav" id="main-nav">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./blog.html">Blog</a></li>
+      <li class="navbar__dropdown active" id="shopDropdown">
+        <button class="navbar__dropdown-toggle" aria-expanded="false">
+          Shop
+          <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="navbar__dropdown-menu">
+          <a href="./shop.html">All Resources</a>
+          <a href="./shop.html?cat=sped">SPED</a>
+          <a href="./shop.html?cat=ot">OT</a>
+          <a href="./shop.html?cat=speech">Speech &amp; Language</a>
+          <a href="./shop.html?cat=general">General Classroom</a>
+        </div>
+      </li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ PAGE HEADER -->
+<div class="page-header">
+  <h1>Shop</h1>
+  <p>Printable resources, activity packs, and tools you can download and use right away.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ FILTERS -->
+<div class="shop-filters">
+  <div class="container">
+    <!-- Audience filter -->
+    <div class="filter-row">
+      <span class="filter-label">Audience:</span>
+      <button class="filter-pill active" data-filter="audience" data-value="all">All</button>
+      <button class="filter-pill" data-filter="audience" data-value="sped">SPED</button>
+      <button class="filter-pill" data-filter="audience" data-value="ot">OT</button>
+      <button class="filter-pill" data-filter="audience" data-value="speech">Speech &amp; Language</button>
+      <button class="filter-pill" data-filter="audience" data-value="general">General Classroom</button>
+    </div>
+    <!-- Category filter + search -->
+    <div class="filter-row" style="justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div class="filter-row" style="gap: 10px; flex-wrap: wrap;">
+        <button class="filter-pill active" data-filter="category" data-value="all">All</button>
+        <button class="filter-pill" data-filter="category" data-value="fine-motor">Fine Motor</button>
+        <button class="filter-pill" data-filter="category" data-value="iep">IEP Resources</button>
+        <button class="filter-pill" data-filter="category" data-value="visual">Visual Supports</button>
+      </div>
+      <div class="shop-search">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" id="shopSearch" placeholder="Search products…" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PRODUCTS -->
+<section class="shop-products">
+  <div class="container">
+    <div class="products-grid" id="productsGrid">
+
+      <!-- Product 1 -->
+      <div class="product-card"
+           data-audience="sped ot"
+           data-category="fine-motor"
+           data-title="Fine Motor Skills Activity Pack Level 1">
+        <div class="product-card__img">
+          <svg class="product-card__placeholder" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="6" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="product-card__badge">Featured</span>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__tags">
+            <span class="tag">Fine Motor</span>
+            <span class="tag">SPED</span>
+            <span class="tag">OT</span>
+          </div>
+          <h3>Fine Motor Skills Activity Pack — Level 1</h3>
+          <p>A printable collection of 20+ fine motor activities designed for early learners, targeting grip strength, hand-eye coordination, and dexterity.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$4.99</span>
+            <a href="#" class="btn btn--amber">Buy Now ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="product-card"
+           data-audience="sped ot"
+           data-category="fine-motor"
+           data-title="Pencil Control Practice Sheets">
+        <div class="product-card__img">
+          <svg class="product-card__placeholder" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="6" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="product-card__badge">Featured</span>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__tags">
+            <span class="tag">Fine Motor</span>
+            <span class="tag">OT</span>
+            <span class="tag">SPED</span>
+          </div>
+          <h3>Pencil Control Practice Sheets</h3>
+          <p>30 printable worksheets targeting pencil grip, pressure control, and stroke formation. Ideal for OT sessions and SPED classrooms.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$3.99</span>
+            <a href="#" class="btn btn--amber">Buy Now ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="product-card"
+           data-audience="sped"
+           data-category="iep"
+           data-title="IEP Goal Bank Fine Motor Objectives">
+        <div class="product-card__img">
+          <svg class="product-card__placeholder" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="6" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="product-card__badge">Featured</span>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__tags">
+            <span class="tag">IEP Resources</span>
+            <span class="tag">SPED</span>
+          </div>
+          <h3>IEP Goal Bank — Fine Motor Objectives</h3>
+          <p>50+ measurable IEP goals for fine motor development, organized by skill level. Ready to copy into any IEP document.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$5.99</span>
+            <a href="#" class="btn btn--amber">Buy Now ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 4 -->
+      <div class="product-card"
+           data-audience="sped general"
+           data-category="visual"
+           data-title="Visual Schedule Card Set Classroom Routines">
+        <div class="product-card__img">
+          <svg class="product-card__placeholder" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="6" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__tags">
+            <span class="tag">Visual Supports</span>
+            <span class="tag">SPED</span>
+            <span class="tag">General Classroom</span>
+          </div>
+          <h3>Visual Schedule Card Set — Classroom Routines</h3>
+          <p>A set of 40 visual schedule cards covering morning routine, transitions, mealtime, and end-of-day procedures.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$2.99</span>
+            <a href="#" class="btn btn--amber">Buy Now ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 5 -->
+      <div class="product-card"
+           data-audience="sped ot general"
+           data-category="fine-motor"
+           data-title="Scissor Skills Practice Pack">
+        <div class="product-card__img">
+          <svg class="product-card__placeholder" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="6" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__tags">
+            <span class="tag">Fine Motor</span>
+            <span class="tag">OT</span>
+            <span class="tag">SPED</span>
+            <span class="tag">General Classroom</span>
+          </div>
+          <h3>Scissor Skills Practice Pack</h3>
+          <p>Progressive cutting activities from straight lines to curves and shapes. Includes graded difficulty and tracking sheets.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$3.99</span>
+            <a href="#" class="btn btn--amber">Buy Now ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 6 -->
+      <div class="product-card"
+           data-audience="speech sped"
+           data-category="visual"
+           data-title="AAC Core Vocabulary Visual Board">
+        <div class="product-card__img">
+          <svg class="product-card__placeholder" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="6" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="product-card__body">
+          <div class="product-card__tags">
+            <span class="tag">Visual Supports</span>
+            <span class="tag">Speech &amp; Language</span>
+            <span class="tag">SPED</span>
+          </div>
+          <h3>AAC Core Vocabulary Visual Board</h3>
+          <p>Printable core vocabulary boards for AAC users. Includes high-frequency words across multiple communication contexts.</p>
+          <div class="product-card__footer">
+            <span class="product-card__price">$4.49</span>
+            <a href="#" class="btn btn--amber">Buy Now ↗</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="hidden" style="text-align:center; padding: 80px 0; color: var(--text-muted);">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto 16px;opacity:0.35"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <p style="font-size:1.05rem;">No products match your filters.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <div class="footer__brand-logo">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="#3DB08A"/><path d="M14 21s-7-4.5-7-9a4 4 0 0 1 7-2.65A4 4 0 0 1 21 12c0 4.5-7 9-7 9z" fill="white"/></svg>
+        Inclusive Materials
+      </div>
+      <p>Evidence-informed tools. Quality resources. Real results.<br/>Designed for OT, SLP, Special Education, and General Education.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul class="footer__links">
+        <li><a href="./blog.html">Blog</a></li>
+        <li><a href="./shop.html">Shop</a></li>
+        <li><a href="./about.html">About</a></li>
+        <li><a href="./contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__mission">
+      <h4>Mission</h4>
+      <p>Creating accessible, practical resources that empower educators and therapists to help every learner thrive.</p>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Inclusive Materials. All rights reserved.</span>
+    <span>Made with care for educators, by educators.</span>
+  </div>
+</footer>
+
+<script src="./main.js"></script>
+</body>
+</html>
