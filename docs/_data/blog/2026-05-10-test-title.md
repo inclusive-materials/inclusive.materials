@@ -1,5 +1,5 @@
 ---
-title: Test title
+title: Test title 2
 date: 2026-05-10T13:19:00
 summary: test2 sumary
 image: /photos/logo.jpg
