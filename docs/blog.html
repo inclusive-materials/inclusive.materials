@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Inclusive Materials</title>
+  <meta name="description" content="Tips, strategies, and insights on special education, fine motor development, and classroom practice." />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="icon" type="image/svg+xml" href="./photos/favicon.svg" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAVBAR -->
+<header class="navbar">
+  <div class="navbar__inner">
+    <a href="./index.html" class="navbar__logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="#3DB08A"/><path d="M14 21s-7-4.5-7-9a4 4 0 0 1 7-2.65A4 4 0 0 1 21 12c0 4.5-7 9-7 9z" fill="white"/></svg>
+      Inclusive Materials
+    </a>
+    <button class="navbar__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar__nav" id="main-nav">
+      <li><a href="./index.html">Home</a></li>
+      <li><a href="./blog.html" class="active">Blog</a></li>
+      <li class="navbar__dropdown" id="shopDropdown">
+        <button class="navbar__dropdown-toggle" aria-expanded="false">
+          Shop
+          <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="navbar__dropdown-menu">
+          <a href="./shop.html">All Resources</a>
+          <a href="./shop.html?cat=sped">SPED</a>
+          <a href="./shop.html?cat=ot">OT</a>
+          <a href="./shop.html?cat=speech">Speech &amp; Language</a>
+          <a href="./shop.html?cat=general">General Classroom</a>
+        </div>
+      </li>
+      <li><a href="./about.html">About</a></li>
+      <li><a href="./contact.html">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ PAGE HEADER -->
+<div class="page-header">
+  <h1>Blog</h1>
+  <p>Tips, strategies, and insights on special education, fine motor development, and classroom practice.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════ ARTICLES -->
+<section class="blog-list">
+  <div style="max-width:860px; margin:0 auto; padding: 0 24px 80px;">
+
+    <!-- Article 1 -->
+    <article class="article-row">
+      <div class="article-row__img">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 8h20M6 14h20M6 20h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="article-row__date">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 4V6.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          April 26, 2026
+        </div>
+        <h2>Why Fine Motor Skills Matter in Special Education</h2>
+        <p>Fine motor skills are the foundation for independence in daily tasks. Here's why they deserve more attention in SPED classrooms — and how to get started.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+    </article>
+
+    <!-- Article 2 -->
+    <article class="article-row">
+      <div class="article-row__img">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 8h20M6 14h20M6 20h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="article-row__date">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 4V6.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          April 26, 2026
+        </div>
+        <h2>5 Easy Ways to Adapt Worksheets for Diverse Learners</h2>
+        <p>Not every student learns the same way. Here are five simple adaptations you can make to any worksheet to better serve your students.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+    </article>
+
+    <!-- Article 3 -->
+    <article class="article-row">
+      <div class="article-row__img">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 8h20M6 14h20M6 20h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="article-row__date">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 4V6.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          April 26, 2026
+        </div>
+        <h2>Building a Sensory-Friendly Classroom on a Budget</h2>
+        <p>You don't need expensive equipment to create a sensory-friendly space. Here are practical tips that won't break the bank.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <div class="footer__brand-logo">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="7" fill="#3DB08A"/><path d="M14 21s-7-4.5-7-9a4 4 0 0 1 7-2.65A4 4 0 0 1 21 12c0 4.5-7 9-7 9z" fill="white"/></svg>
+        Inclusive Materials
+      </div>
+      <p>Evidence-informed tools. Quality resources. Real results.<br/>Designed for OT, SLP, Special Education, and General Education.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul class="footer__links">
+        <li><a href="./blog.html">Blog</a></li>
+        <li><a href="./shop.html">Shop</a></li>
+        <li><a href="./about.html">About</a></li>
+        <li><a href="./contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__mission">
+      <h4>Mission</h4>
+      <p>Creating accessible, practical resources that empower educators and therapists to help every learner thrive.</p>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Inclusive Materials. All rights reserved.</span>
+    <span>Made with care for educators, by educators.</span>
+  </div>
+</footer>
+
+<script src="./main.js"></script>
+</body>
+</html>
