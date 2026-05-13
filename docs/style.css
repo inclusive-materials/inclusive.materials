@@ -504,8 +504,9 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
 .what-i-create__grid {
   max-width: 1060px;
   margin: 0 auto;
+  max-width: 720px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
 
