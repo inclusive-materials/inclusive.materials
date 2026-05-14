@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const audienceMatch =
           activeAudience === 'all' ||
           cardAudience === 'all' ||
-          cardAudience.split(/\s+/).filter(Boolean).includes(activeAudience);
+          cardAudience.split(/[\s,]+/).filter(Boolean).includes(activeAudience);
         const categoryMatch =
           activeCategory === 'all' || cardCategory === 'all' || cardCategory === activeCategory;
         const searchMatch = searchQuery === '' || cardTitle.includes(searchQuery) || cardTags.includes(searchQuery);
