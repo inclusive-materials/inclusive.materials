@@ -94,7 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
       cards.forEach(card => {
         const cardAudience = (card.dataset.audience || '').toLowerCase();
         const cardCategory = (card.dataset.category || '').toLowerCase();
-        const cardTitle = (card.dataset.title || '').toLowerCase();
+        const cardTitle = (card.dataset.title || '').toLowerCase(); 
+        const cardTags = (card.dataset.tags || '').toLowerCase();
 
         const audienceMatch =
           activeAudience === 'all' ||
@@ -102,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
           cardAudience.split(/\s+/).filter(Boolean).includes(activeAudience);
         const categoryMatch =
           activeCategory === 'all' || cardCategory === 'all' || cardCategory === activeCategory;
-        const searchMatch = searchQuery === '' || cardTitle.includes(searchQuery);
+        const searchMatch = searchQuery === '' || cardTitle.includes(searchQuery) || cardTags.includes(searchQuery);
 
         if (audienceMatch && categoryMatch && searchMatch) {
           card.style.display = '';
