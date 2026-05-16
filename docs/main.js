@@ -136,62 +136,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ── Contact Form ───────────────────────────────────────── */
+/* ── Contact Form ───────────────────────────────────────── */
   const contactForm = document.getElementById('contactForm');
   const formSuccess = document.getElementById('formSuccess');
 
-if (contactForm) {
-contactForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
 
-  grecaptcha.ready(() => {
-    grecaptcha.execute('6LdvBOssAAAAIAH-oPlqB6LgS7IOTrxSwWFeiQp', { action: 'contact' })
-    .then((token) => {
-      document.getElementById('g-recaptcha-response').value = token;
+      const name = contactForm.querySelector('#name').value.trim();
+      const email = contactForm.querySelector('#email').value.trim();
+      const subject = contactForm.querySelector('#subject').value.trim();
+      const message = contactForm.querySelector('#message').value.trim();
 
-    const name = contactForm.querySelector('#name').value.trim();
-    const email = contactForm.querySelector('#email').value.trim();
-    const subject = contactForm.querySelector('#subject').value.trim();
-    const message = contactForm.querySelector('#message').value.trim();
-
-    if (!name || !email || !message) {
-      [contactForm.querySelector('#name'), contactForm.querySelector('#email'), contactForm.querySelector('#message')]
-        .forEach(field => {
-          if (!field.value.trim()) {
-            field.style.borderColor = '#e05a5a';
-            field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
-          }
-        });
-      return;
-    }
-
-    const submitBtn = contactForm.querySelector('[type="submit"]');
-    submitBtn.textContent = 'Sending…';
-    submitBtn.disabled = true;
-
-    fetch('https://hook.us2.make.com/dygxlzskmsj5k9qm9rdip5bis2a8ckj6', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, subject, message })
-    })
-    .then(() => {
-      contactForm.reset();
-      submitBtn.textContent = 'Send Message';
-      submitBtn.disabled = false;
-      if (formSuccess) {
-        formSuccess.classList.remove('hidden');
-        setTimeout(() => formSuccess?.classList.add('hidden'), 5000);
+      if (!name || !email || !message) {
+        [contactForm.querySelector('#name'), contactForm.querySelector('#email'), contactForm.querySelector('#message')]
+          .forEach(field => {
+            if (!field.value.trim()) {
+              field.style.borderColor = '#e05a5a';
+              field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
+            }
+          });
+        return;
       }
-    })
-    .catch(() => {
-      submitBtn.textContent = 'Send Message';
-      submitBtn.disabled = false;
-      alert('Something went wrong. Please try again.');
-});   // closes fetch
-      });     // closes .then (grecaptcha token)
-    });       // closes grecaptcha.ready
-  });         // closes addEventListener
-}
+
+      const submitBtn = contactForm.querySelector('[type="submit"]');
+      submitBtn.textContent = 'Sending…';
+      submitBtn.disabled = true;
+
+      fetch('https://hook.us2.make.com/dygxlzskmsj5k9qm9rdip5bis2a8ckj6', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message })
+      })
+      .then(() => {
+        contactForm.reset();
+        submitBtn.textContent = 'Send Message';
+        submitBtn.disabled = false;
+        if (formSuccess) {
+          formSuccess.classList.remove('hidden');
+          setTimeout(() => formSuccess?.classList.add('hidden'), 5000);
+        }
+      })
+      .catch(() => {
+        submitBtn.textContent = 'Send Message';
+        submitBtn.disabled = false;
+        alert('Something went wrong. Please try again.');
+      });
+    });
+  }
   /* ── Cookie consent banner (essential cookies notice) ─────── */
   try {
     const COOKIE_KEY = 'im_cookie_consent_v1';
