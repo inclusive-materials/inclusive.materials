@@ -879,6 +879,10 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
 .shop-search input:focus { border-color: var(--green-mid); }
 
 .shop-products { padding: 0 24px 80px; }
+/* Shop page product grid — responsive */
+#shop-resources-container {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
 
 /* ============================================================
    ABOUT PAGE
@@ -1050,7 +1054,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.2; }
   .footer__inner { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px) {#shop-resources-container { grid-template-columns: 1fr !important; }
   .navbar__nav { display: none; flex-direction: column; position: fixed; top: 60px; left: 0; right: 0; background: var(--bg); padding: 16px; border-bottom: 1px solid rgba(0,0,0,0.08); gap: 4px; z-index: 99; }
   .navbar__nav.open { display: flex; }
   .navbar__hamburger { display: flex; }
