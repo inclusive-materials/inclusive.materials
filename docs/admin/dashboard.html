@@ -4,6 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — Inclusive Materials</title>
+  <script>
+    // ── Password protection (SHA-256 hash) ──
+    const HASH = '4d21fbba333628e24015e5bc0e04b0cdb22faf60038c77c2ef7a2032aecd2dc9';
+    async function checkAuth() {
+      if (sessionStorage.getItem('im_auth') === HASH) return showDashboard();
+      document.getElementById('login-screen').style.display = 'flex';
+    }
+    async function tryLogin() {
+      const pw = document.getElementById('login-pw').value;
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+      const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+      if (hash === HASH) {
+        sessionStorage.setItem('im_auth', HASH);
+        showDashboard();
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+        document.getElementById('login-pw').value = '';
+        document.getElementById('login-pw').focus();
+      }
+    }
+    function showDashboard() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard-root').style.display = 'block';
+    }
+    function logout() {
+      sessionStorage.removeItem('im_auth');
+      location.reload();
+    }
+    window.addEventListener('DOMContentLoaded', checkAuth);
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -116,13 +146,32 @@
 </head>
 <body>
 
+<!-- ── LOGIN SCREEN ── -->
+<div id="login-screen" style="display:none;position:fixed;inset:0;background:#F7F9F8;z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:white;border:1px solid #e5e7eb;border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,0.08);text-align:center;">
+    <img src="/photos/logo2.png" alt="" width="56" height="56" style="border-radius:10px;margin-bottom:1rem;" />
+    <h2 style="font-size:1.15rem;font-weight:700;color:#1C4A30;margin-bottom:0.3rem;">Inclusive Materials</h2>
+    <p style="font-size:0.85rem;color:#6b7280;margin-bottom:1.5rem;">Admin Dashboard — Enter your password</p>
+    <input id="login-pw" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')tryLogin()"
+      style="width:100%;padding:0.65rem 0.9rem;border:1px solid #e5e7eb;border-radius:8px;font-size:0.95rem;outline:none;margin-bottom:0.75rem;box-sizing:border-box;" />
+    <p id="login-error" style="display:none;color:#dc2626;font-size:0.82rem;margin-bottom:0.75rem;">Incorrect password. Please try again.</p>
+    <button onclick="tryLogin()" style="width:100%;padding:0.65rem;background:#1C4A30;color:white;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer;">Sign In</button>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dashboard-root" style="display:none;">
+
 <!-- ── HEADER ── -->
 <header class="dash-header">
   <div class="dash-header__left">
     <img src="/photos/logo2.png" alt="" width="32" height="32" style="border-radius:6px;" />
     <h1>Inclusive Materials — Dashboard</h1>
   </div>
-  <a href="/" target="_blank">↗ View Live Site</a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="/" target="_blank">↗ View Live Site</a>
+    <button onclick="logout()" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.8rem;cursor:pointer;">Sign Out</button>
+  </div>
 </header>
 
 <!-- ── QUICK LINKS ── -->
@@ -548,5 +597,6 @@ renderOverview();
 renderSales();
 renderAnalyticsDisplay();
 </script>
+</div><!-- end dashboard-root -->
 </body>
 </html>
