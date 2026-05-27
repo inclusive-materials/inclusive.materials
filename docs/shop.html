@@ -230,32 +230,20 @@
   <p>Printable resources, activity packs, and tools you can download and use right away.</p>
 </div>
 
-<!-- ═══════════════════════════════════════════ FILTERS (top pills + search) -->
-<div class="shop-filters">
-  <div class="container">
-    <div class="filter-row">
-      <span class="filter-label">Audience:</span>
-      <button class="filter-pill active" data-filter="audience" data-value="all">All</button>
-      <button class="filter-pill" data-filter="audience" data-value="sped">SPED</button>
-      <button class="filter-pill" data-filter="audience" data-value="ot">OT</button>
-      <button class="filter-pill" data-filter="audience" data-value="speech">Speech &amp; Language</button>
-      <button class="filter-pill" data-filter="audience" data-value="general">General Classroom</button>
-      <div class="shop-search" style="margin-left:auto;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <input type="text" id="shopSearch" placeholder="Search products…" />
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ═══════════════════════════════════════════ SHOP LAYOUT -->
 <div class="shop-layout">
 
   <!-- ── LEFT SIDEBAR ── -->
   <aside class="shop-sidebar" id="shopSidebar" aria-label="Browse by category">
     <div class="sidebar-inner">
-      <p class="sidebar-heading">Browse by Category</p>
-
+<p class="sidebar-heading">Browse by Category</p>
+<div style="padding: 0 12px 12px;">
+  <div style="display:flex; align-items:center; gap:8px; background:#f5fbf7; border:1px solid #e0ede7; border-radius:8px; padding:7px 10px;">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#90a89a" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#90a89a" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <input type="text" id="shopSearch" placeholder="Search products…" style="border:none; background:none; outline:none; font-size:0.78rem; color:#1C4A30; width:100%;" />
+  </div>
+</div>
+      
       <!-- OT -->
       <div class="sidebar-specialty">
         <button class="sidebar-specialty-btn" data-specialty="ot" aria-expanded="false">
