@@ -35,6 +35,8 @@
     window.addEventListener('DOMContentLoaded', checkAuth);
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Google Identity Services — for GA4 OAuth -->
+  <script src="https://accounts.google.com/gsi/client" async defer onload="onGISLoad()"></script>
   <style>
     :root {
       --green: #1C4A30;
@@ -113,10 +115,13 @@
     .btn--danger { background: #fee2e2; color: #dc2626; }
     .btn--danger:hover { background: #fecaca; }
     .btn--sm { padding: 0.28rem 0.6rem; font-size: 0.75rem; }
+    .btn--ghost { background: #f3f4f6; color: var(--muted); }
+    .btn--ghost:hover { background: #e5e7eb; }
 
-    /* Analytics note */
+    /* Info box */
     .info-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; font-size: 0.85rem; color: #166534; display: flex; align-items: flex-start; gap: 0.5rem; }
     .info-box a { color: var(--green); font-weight: 600; }
+    .info-box--blue { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
 
     /* Empty state */
     .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--muted); font-size: 0.9rem; }
@@ -128,12 +133,22 @@
     .save-feedback { display: inline-block; margin-left: 0.75rem; font-size: 0.82rem; color: var(--teal); font-weight: 500; opacity: 0; transition: opacity 0.3s; }
     .save-feedback.show { opacity: 1; }
 
-    /* Inline row */
-    .page-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
-    .page-row input { padding: 0.4rem 0.65rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.83rem; outline: none; }
-    .page-row input:focus { border-color: var(--teal); }
-    .page-row input:first-child { flex: 1; }
-    .page-row input:last-of-type { width: 90px; }
+    /* GA4 connect box */
+    .ga4-connect-box { background: white; border-radius: 12px; border: 2px dashed var(--border); padding: 2.5rem 2rem; text-align: center; margin-bottom: 1.5rem; }
+    .ga4-connect-box h2 { font-size: 1.05rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .ga4-connect-box p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.25rem; }
+    .ga4-status-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; background: white; border-radius: 10px; border: 1px solid #bbf7d0; padding: 0.65rem 1rem; margin-bottom: 1.25rem; }
+    .ga4-status-bar span { font-size: 0.85rem; font-weight: 600; color: var(--teal); }
+
+    /* GA4 loading */
+    .ga4-loading { text-align: center; padding: 3rem 1rem; }
+    .ga4-loading .spinner { font-size: 2rem; animation: spin 1.5s linear infinite; display: inline-block; margin-bottom: 0.75rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Instructions list */
+    .setup-steps { font-size: 0.82rem; color: var(--muted); padding-left: 1.25rem; line-height: 2.1; }
+    .setup-steps code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text); }
+    .setup-steps a { color: var(--green); font-weight: 500; }
 
     @media (max-width: 768px) {
       .charts-row { grid-template-columns: 1fr; }
@@ -201,7 +216,7 @@
         <canvas id="revenueChart" height="110"></canvas>
       </div>
       <div class="chart-card">
-        <h3>Visitors — Last 7 Days</h3>
+        <h3>Sessions — Last 30 Days</h3>
         <canvas id="visitorsChartOverview" height="110"></canvas>
       </div>
     </div>
@@ -253,60 +268,92 @@
     </div>
   </div>
 
-  <!-- ANALYTICS -->
+  <!-- ANALYTICS (Live GA4) -->
   <div id="tab-analytics" class="tab-panel">
-    <div class="info-box">
-      📊 Copy your numbers from <a href="https://analytics.google.com" target="_blank">Google Analytics</a> and paste them below. Data is saved in your browser — update it whenever you check GA4.
+
+    <!-- SETUP SECTION (shown when not connected) -->
+    <div id="ga4-setup-section">
+      <div class="ga4-connect-box">
+        <div style="font-size:2.5rem;margin-bottom:0.75rem;">📊</div>
+        <h2>Connect Google Analytics</h2>
+        <p>Sign in with Google once and your live data will appear here automatically — no copy-pasting needed.</p>
+        <button class="btn btn--primary" id="ga4-connect-btn" style="font-size:0.95rem;padding:0.6rem 1.5rem;">
+          Sign in with Google
+        </button>
+      </div>
+
+      <div class="form-card">
+        <h3>⚙️ One-Time Setup — OAuth Client ID</h3>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem;">
+          You need a free Google Cloud OAuth Client ID to allow this dashboard to read your analytics securely.
+          This only needs to be done once.
+        </p>
+        <div class="form-group" style="max-width:560px;margin-bottom:1rem;">
+          <label>Your OAuth Client ID</label>
+          <input type="text" id="ga4-client-id" placeholder="xxxxxxxxxx.apps.googleusercontent.com"
+            style="font-family:monospace;font-size:0.82rem;" />
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+          <button class="btn btn--teal" id="ga4-save-cid-btn">Save Client ID</button>
+          <span id="ga4-cid-feedback" style="font-size:0.82rem;color:var(--teal);font-weight:500;display:none;">✓ Saved!</span>
+        </div>
+
+        <hr class="section-sep" />
+        <p style="font-size:0.85rem;font-weight:600;color:var(--green);margin-bottom:0.6rem;">
+          Step-by-step instructions to get your Client ID:
+        </p>
+        <ol class="setup-steps">
+          <li>Go to <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a> — sign in with your Google account</li>
+          <li>Click the project dropdown at the top → <strong>New Project</strong> → name it <em>Inclusive Materials</em> → Create</li>
+          <li>In the left menu go to <strong>APIs &amp; Services → Library</strong></li>
+          <li>Search for <strong>Google Analytics Data API</strong> → click it → click <strong>Enable</strong></li>
+          <li>Go to <strong>APIs &amp; Services → OAuth consent screen</strong> → choose <strong>External</strong> → Create</li>
+          <li>Fill in App name (<em>Inclusive Materials Dashboard</em>) and your email → Save and Continue through all steps</li>
+          <li>Go to <strong>APIs &amp; Services → Credentials → + Create Credentials → OAuth client ID</strong></li>
+          <li>Application type: <strong>Web application</strong></li>
+          <li>Under <em>Authorized JavaScript origins</em>, add: <code>https://inclusivematerials.com</code></li>
+          <li>Click <strong>Create</strong> → copy the <strong>Client ID</strong> (ends in <code>.apps.googleusercontent.com</code>)</li>
+          <li>Paste it in the field above → click <strong>Save Client ID</strong> → then click <strong>Sign in with Google</strong></li>
+        </ol>
+      </div>
     </div>
 
-    <div class="form-card">
-      <h3>Key Metrics — Last 30 Days</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Total Visitors</label>
-          <input type="number" id="stat-visitors" placeholder="0" />
-        </div>
-        <div class="form-group">
-          <label>Page Views</label>
-          <input type="number" id="stat-pageviews" placeholder="0" />
-        </div>
-        <div class="form-group">
-          <label>New Users</label>
-          <input type="number" id="stat-newusers" placeholder="0" />
-        </div>
-        <div class="form-group">
-          <label>Avg. Session (mins)</label>
-          <input type="number" id="stat-session" placeholder="0.0" step="0.1" />
+    <!-- LOADING SPINNER -->
+    <div id="ga4-loading" style="display:none;" class="ga4-loading">
+      <div class="spinner">⏳</div>
+      <p style="color:var(--muted);font-size:0.9rem;">Loading your analytics data…</p>
+    </div>
+
+    <!-- LIVE DATA (shown when connected) -->
+    <div id="ga4-live-section" style="display:none;">
+      <div class="ga4-status-bar">
+        <span>✅ Connected to Google Analytics · Last 30 days</span>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn--teal btn--sm" id="ga4-refresh-btn">🔄 Refresh Data</button>
+          <button class="btn btn--ghost btn--sm" id="ga4-disconnect-btn">Disconnect</button>
         </div>
       </div>
 
-      <hr class="section-sep" />
-      <h3 style="margin-bottom:0.75rem;">Daily Visitors — Last 7 Days</h3>
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;" id="daily-inputs"></div>
+      <div class="cards-row" id="ga4-cards"></div>
 
-      <hr class="section-sep" />
-      <h3 style="margin-bottom:0.75rem;">Top Pages</h3>
-      <div id="top-pages-inputs"></div>
-      <button class="btn btn--teal btn--sm" id="add-page-btn" style="margin-top:0.4rem;">+ Add Page</button>
-
-      <hr class="section-sep" />
-      <button class="btn btn--primary" id="save-analytics-btn">Save Analytics</button>
-      <span class="save-feedback" id="save-feedback">✓ Saved!</span>
-    </div>
-
-    <div class="cards-row" id="analytics-cards"></div>
-
-    <div class="charts-row">
-      <div class="chart-card">
-        <h3>Daily Visitors</h3>
-        <canvas id="dailyChart" height="110"></canvas>
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Daily Sessions — Last 30 Days</h3>
+          <canvas id="ga4-dailyChart" height="110"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Top Pages by Views</h3>
+          <canvas id="ga4-topPagesChart" height="110"></canvas>
+        </div>
       </div>
-      <div class="chart-card">
-        <h3>Top Pages by Views</h3>
-        <canvas id="topPagesChart" height="110"></canvas>
+
+      <div class="table-card">
+        <h3>Top Pages — Detailed</h3>
+        <div id="ga4-pages-table"></div>
       </div>
     </div>
-  </div>
+
+  </div><!-- end tab-analytics -->
 
 </main>
 
@@ -425,105 +472,26 @@ function renderSales() {
 }
 
 // ─────────────────────────────────────────
-// ANALYTICS
-// ─────────────────────────────────────────
-function defaultAnalytics() {
-  return {
-    visitors:'', pageviews:'', newusers:'', session:'',
-    daily: Array(7).fill(''),
-    topPages: [{ url:'/blog/', views:'' }, { url:'/shop/', views:'' }, { url:'/', views:'' }]
-  };
-}
-function getAnalytics() { return load('analytics', defaultAnalytics()); }
-
-function buildDailyInputs() {
-  const a = getAnalytics();
-  const labels = last7Labels();
-  document.getElementById('daily-inputs').innerHTML = labels.map((l,i)=>`
-    <div class="form-group" style="min-width:95px;">
-      <label style="font-size:0.68rem;">${l}</label>
-      <input type="number" data-daily="${i}" value="${a.daily[i]||''}" placeholder="0" style="width:78px;" />
-    </div>`).join('');
-}
-
-function buildTopPagesInputs() {
-  const a = getAnalytics();
-  document.getElementById('top-pages-inputs').innerHTML = (a.topPages||[]).map((p,i)=>`
-    <div class="page-row">
-      <input type="text" data-page-url="${i}" value="${p.url}" placeholder="/page-name/" />
-      <input type="number" data-page-views="${i}" value="${p.views}" placeholder="Views" />
-      <button class="btn btn--danger btn--sm" onclick="removePage(${i})">✕</button>
-    </div>`).join('');
-}
-
-window.removePage = function(i) {
-  const a = getAnalytics(); a.topPages.splice(i,1); save('analytics',a);
-  buildTopPagesInputs();
-};
-
-document.getElementById('add-page-btn').addEventListener('click', () => {
-  const a = getAnalytics();
-  a.topPages.push({ url:'', views:'' }); save('analytics',a);
-  buildTopPagesInputs();
-});
-
-document.getElementById('save-analytics-btn').addEventListener('click', () => {
-  const a = getAnalytics();
-  a.visitors   = document.getElementById('stat-visitors').value;
-  a.pageviews  = document.getElementById('stat-pageviews').value;
-  a.newusers   = document.getElementById('stat-newusers').value;
-  a.session    = document.getElementById('stat-session').value;
-  a.daily      = Array.from({length:7}, (_,i) => document.querySelector(`[data-daily="${i}"]`)?.value||'');
-  a.topPages   = [];
-  document.querySelectorAll('[data-page-url]').forEach((el,i) => {
-    a.topPages.push({ url: el.value, views: document.querySelector(`[data-page-views="${i}"]`)?.value||'' });
-  });
-  save('analytics', a);
-  renderAnalyticsDisplay();
-  const fb = document.getElementById('save-feedback');
-  fb.classList.add('show'); setTimeout(()=>fb.classList.remove('show'), 2500);
-});
-
-function renderAnalyticsDisplay() {
-  const a = getAnalytics();
-
-  // Fill inputs
-  ['visitors','pageviews','newusers','session'].forEach(k => {
-    const el = document.getElementById('stat-'+k); if(el) el.value = a[k]||'';
-  });
-  buildDailyInputs();
-  buildTopPagesInputs();
-
-  // Summary cards
-  document.getElementById('analytics-cards').innerHTML = `
-    <div class="card"><div class="card__label">Visitors (30d)</div><div class="card__value">${a.visitors||'—'}</div></div>
-    <div class="card card--teal"><div class="card__label">Page Views (30d)</div><div class="card__value">${a.pageviews||'—'}</div></div>
-    <div class="card"><div class="card__label">New Users (30d)</div><div class="card__value">${a.newusers||'—'}</div></div>
-    <div class="card card--amber"><div class="card__label">Avg. Session</div><div class="card__value">${a.session ? a.session+'m' : '—'}</div></div>`;
-
-  // Daily chart
-  makeChart('dailyChart', 'line', last7Labels(),
-    [{ label:'Visitors', data: a.daily.map(v=>parseInt(v)||0),
-       borderColor:'#3DB08A', backgroundColor:'rgba(61,176,138,0.12)', fill:true, tension:0.35 }]);
-
-  // Top pages chart
-  const pages = (a.topPages||[]).filter(p=>p.url && p.views);
-  makeChart('topPagesChart', 'bar', pages.map(p=>p.url),
-    [{ label:'Views', data: pages.map(p=>parseInt(p.views)||0), backgroundColor:'#1C4A30', borderRadius:4 }],
-    { indexAxis:'y' });
-}
-
-// ─────────────────────────────────────────
 // OVERVIEW
 // ─────────────────────────────────────────
+function getGA4KPI() {
+  try { return JSON.parse(sessionStorage.getItem('im_ga4_kpi')) || {}; } catch { return {}; }
+}
+function getGA4Daily() {
+  try { return JSON.parse(sessionStorage.getItem('im_ga4_daily')) || null; } catch { return null; }
+}
+
 function renderOverview() {
   const sales = getSales();
-  const a = getAnalytics();
+  const kpi = getGA4KPI();
+  const daily = getGA4Daily();
   const thisMonth = todayStr().slice(0,7);
   const mSales = sales.filter(s=>s.date.startsWith(thisMonth));
   const mRevenue = mSales.reduce((t,s)=>t+s.amount, 0);
   const mOrders  = mSales.reduce((t,s)=>t+s.orders, 0);
   const allRev   = sales.reduce((t,s)=>t+s.amount, 0);
+
+  const hasGA4 = kpi.sessions !== undefined;
 
   document.getElementById('overview-cards').innerHTML = `
     <div class="card card--teal">
@@ -537,14 +505,14 @@ function renderOverview() {
       <div class="card__sub">${sales.length} sale${sales.length!==1?'s':''} logged</div>
     </div>
     <div class="card card--amber">
-      <div class="card__label">Visitors (30d)</div>
-      <div class="card__value">${a.visitors||'—'}</div>
-      <div class="card__sub">Update in Analytics tab</div>
+      <div class="card__label">Sessions (30d)</div>
+      <div class="card__value">${hasGA4 ? kpi.sessions.toLocaleString() : '—'}</div>
+      <div class="card__sub">${hasGA4 ? 'Live from Google Analytics' : 'Connect in Analytics tab'}</div>
     </div>
     <div class="card">
       <div class="card__label">Page Views (30d)</div>
-      <div class="card__value">${a.pageviews||'—'}</div>
-      <div class="card__sub">Update in Analytics tab</div>
+      <div class="card__value">${hasGA4 ? kpi.pageviews.toLocaleString() : '—'}</div>
+      <div class="card__sub">${hasGA4 ? 'Live from Google Analytics' : 'Connect in Analytics tab'}</div>
     </div>`;
 
   // Revenue chart
@@ -554,10 +522,18 @@ function renderOverview() {
   makeChart('revenueChart','bar', months.map(monthLabel),
     [{ label:'Revenue ($)', data: months.map(m=>+((monthly[m]||0).toFixed(2))), backgroundColor:'#3DB08A', borderRadius:4 }]);
 
-  // Visitors chart
-  makeChart('visitorsChartOverview','line', last7Labels(),
-    [{ label:'Visitors', data: a.daily.map(v=>parseInt(v)||0),
-       borderColor:'#1C4A30', backgroundColor:'rgba(28,74,48,0.1)', fill:true, tension:0.35 }]);
+  // Sessions/visitors chart — use live GA4 data if available
+  if (daily && daily.labels && daily.labels.length) {
+    const last30L = daily.labels.slice(-30);
+    const last30V = daily.values.slice(-30);
+    makeChart('visitorsChartOverview','line', last30L,
+      [{ label:'Sessions', data: last30V,
+         borderColor:'#1C4A30', backgroundColor:'rgba(28,74,48,0.1)', fill:true, tension:0.35 }]);
+  } else {
+    makeChart('visitorsChartOverview','line', last7Labels(),
+      [{ label:'Sessions', data: Array(7).fill(0),
+         borderColor:'#1C4A30', backgroundColor:'rgba(28,74,48,0.1)', fill:true, tension:0.35 }]);
+  }
 
   // Recent sales table
   const el = document.getElementById('overview-recent');
@@ -574,6 +550,265 @@ function renderOverview() {
 }
 
 // ─────────────────────────────────────────
+// GOOGLE ANALYTICS 4 — LIVE DATA
+// ─────────────────────────────────────────
+const GA4_PROPERTY = 'properties/539267079';
+const GA4_SCOPE    = 'https://www.googleapis.com/auth/analytics.readonly';
+let ga4Token       = sessionStorage.getItem('im_ga4_token') || null;
+let ga4TokenClient = null;
+
+// Called automatically when the GIS <script> finishes loading
+function onGISLoad() {
+  const cid = localStorage.getItem('im_ga4_cid');
+  if (cid) buildTokenClient(cid);
+}
+
+function buildTokenClient(cid) {
+  if (typeof google === 'undefined' || !google.accounts) return;
+  ga4TokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: cid,
+    scope: GA4_SCOPE,
+    callback: (resp) => {
+      if (resp.error) {
+        alert('Google sign-in error: ' + resp.error);
+        return;
+      }
+      ga4Token = resp.access_token;
+      sessionStorage.setItem('im_ga4_token', ga4Token);
+      showGA4Live();
+      fetchGA4Data();
+    }
+  });
+}
+
+function initAnalyticsTab() {
+  // Pre-fill saved client ID
+  const cid = localStorage.getItem('im_ga4_cid') || '';
+  const cidEl = document.getElementById('ga4-client-id');
+  if (cidEl) cidEl.value = cid;
+
+  if (ga4Token) {
+    // Token in session — show live data immediately
+    showGA4Live();
+    fetchGA4Data();
+  } else {
+    // Not connected
+    document.getElementById('ga4-setup-section').style.display = 'block';
+    document.getElementById('ga4-loading').style.display = 'none';
+    document.getElementById('ga4-live-section').style.display = 'none';
+  }
+}
+
+function showGA4Live() {
+  document.getElementById('ga4-setup-section').style.display = 'none';
+  document.getElementById('ga4-loading').style.display = 'none';
+  document.getElementById('ga4-live-section').style.display = 'block';
+}
+
+// "Sign in with Google" button
+document.getElementById('ga4-connect-btn').addEventListener('click', () => {
+  const cid = localStorage.getItem('im_ga4_cid');
+  if (!cid) {
+    alert('Please enter and save your OAuth Client ID first (see the instructions below).');
+    document.getElementById('ga4-client-id').focus();
+    return;
+  }
+  if (!ga4TokenClient) buildTokenClient(cid);
+  if (ga4TokenClient) {
+    ga4TokenClient.requestAccessToken({ prompt: 'consent' });
+  } else {
+    alert('Google Sign-In is still loading — please wait a moment and try again.');
+  }
+});
+
+// Save Client ID button
+document.getElementById('ga4-save-cid-btn').addEventListener('click', () => {
+  const cid = document.getElementById('ga4-client-id').value.trim();
+  if (!cid) { alert('Please enter your OAuth Client ID.'); return; }
+  localStorage.setItem('im_ga4_cid', cid);
+  buildTokenClient(cid);
+  const fb = document.getElementById('ga4-cid-feedback');
+  fb.style.display = 'inline';
+  setTimeout(() => fb.style.display = 'none', 2500);
+});
+
+// Refresh button
+document.getElementById('ga4-refresh-btn').addEventListener('click', fetchGA4Data);
+
+// Disconnect button
+document.getElementById('ga4-disconnect-btn').addEventListener('click', () => {
+  ga4Token = null;
+  sessionStorage.removeItem('im_ga4_token');
+  sessionStorage.removeItem('im_ga4_kpi');
+  sessionStorage.removeItem('im_ga4_daily');
+  document.getElementById('ga4-setup-section').style.display = 'block';
+  document.getElementById('ga4-live-section').style.display = 'none';
+  renderOverview(); // refresh overview cards to show "—"
+});
+
+// Make a GA4 Data API call
+async function ga4Post(body) {
+  const res = await fetch(
+    `https://analyticsdata.googleapis.com/v1beta/${GA4_PROPERTY}:runReport`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + ga4Token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    }
+  );
+  if (res.status === 401) {
+    // Token expired — clear and ask to reconnect
+    ga4Token = null;
+    sessionStorage.removeItem('im_ga4_token');
+    document.getElementById('ga4-loading').style.display = 'none';
+    document.getElementById('ga4-setup-section').style.display = 'block';
+    document.getElementById('ga4-live-section').style.display = 'none';
+    alert('Your Google Analytics session has expired. Please sign in again.');
+    throw new Error('ga4_expired');
+  }
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error('GA4 API error ' + res.status + ': ' + errText);
+  }
+  return res.json();
+}
+
+// Fetch and display all GA4 data
+async function fetchGA4Data() {
+  if (!ga4Token) return;
+  document.getElementById('ga4-loading').style.display = 'block';
+  document.getElementById('ga4-live-section').style.display = 'none';
+
+  try {
+    const [summary, daily, pages] = await Promise.all([
+      // 30-day summary metrics
+      ga4Post({
+        dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
+        metrics: [
+          { name: 'sessions' },
+          { name: 'totalUsers' },
+          { name: 'screenPageViews' },
+          { name: 'averageSessionDuration' },
+          { name: 'bounceRate' }
+        ]
+      }),
+      // Daily sessions for the last 30 days
+      ga4Post({
+        dateRanges: [{ startDate: '29daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'date' }],
+        metrics: [{ name: 'sessions' }],
+        orderBys: [{ dimension: { dimensionName: 'date' } }]
+      }),
+      // Top 10 pages by views
+      ga4Post({
+        dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'pagePath' }],
+        metrics: [{ name: 'screenPageViews' }, { name: 'sessions' }],
+        orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
+        limit: 10
+      })
+    ]);
+
+    // ── Parse summary metrics ──
+    const mv       = summary.rows?.[0]?.metricValues || [];
+    const sessions  = parseInt(mv[0]?.value)  || 0;
+    const users     = parseInt(mv[1]?.value)  || 0;
+    const pageviews = parseInt(mv[2]?.value)  || 0;
+    const avgSec    = parseFloat(mv[3]?.value) || 0;
+    const bounce    = parseFloat(mv[4]?.value) || 0;
+    const avgMins   = (avgSec / 60).toFixed(1);
+    const bounceStr = (bounce * 100).toFixed(1) + '%';
+
+    // Store KPIs in sessionStorage so overview can read them
+    sessionStorage.setItem('im_ga4_kpi', JSON.stringify({ sessions, users, pageviews, avgMins }));
+
+    // ── Summary cards ──
+    document.getElementById('ga4-cards').innerHTML = `
+      <div class="card card--teal">
+        <div class="card__label">Sessions (30d)</div>
+        <div class="card__value">${sessions.toLocaleString()}</div>
+        <div class="card__sub">Unique visits</div>
+      </div>
+      <div class="card">
+        <div class="card__label">Users (30d)</div>
+        <div class="card__value">${users.toLocaleString()}</div>
+        <div class="card__sub">Total users</div>
+      </div>
+      <div class="card card--amber">
+        <div class="card__label">Page Views (30d)</div>
+        <div class="card__value">${pageviews.toLocaleString()}</div>
+        <div class="card__sub">Total views</div>
+      </div>
+      <div class="card">
+        <div class="card__label">Avg. Session</div>
+        <div class="card__value">${avgMins}m</div>
+        <div class="card__sub">Duration · ${bounceStr} bounce</div>
+      </div>`;
+
+    // ── Daily sessions chart ──
+    const dLabels = [], dVals = [];
+    (daily.rows || []).forEach(r => {
+      const d = r.dimensionValues[0].value; // YYYYMMDD
+      const date = new Date(d.slice(0,4) + '-' + d.slice(4,6) + '-' + d.slice(6,8));
+      dLabels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+      dVals.push(parseInt(r.metricValues[0].value) || 0);
+    });
+    // Store daily for overview chart
+    sessionStorage.setItem('im_ga4_daily', JSON.stringify({ labels: dLabels, values: dVals }));
+
+    makeChart('ga4-dailyChart', 'line', dLabels,
+      [{
+        label: 'Sessions',
+        data: dVals,
+        borderColor: '#3DB08A',
+        backgroundColor: 'rgba(61,176,138,0.12)',
+        fill: true,
+        tension: 0.35
+      }]);
+
+    // ── Top pages chart (horizontal bar) ──
+    const pRows = pages.rows || [];
+    const pLabels = pRows.map(r => r.dimensionValues[0].value);
+    const pVals   = pRows.map(r => parseInt(r.metricValues[0].value) || 0);
+    makeChart('ga4-topPagesChart', 'bar', pLabels,
+      [{ label: 'Views', data: pVals, backgroundColor: '#1C4A30', borderRadius: 4 }],
+      { indexAxis: 'y' });
+
+    // ── Top pages table ──
+    const pEl = document.getElementById('ga4-pages-table');
+    if (pRows.length) {
+      pEl.innerHTML = `<table>
+        <thead><tr><th>Page</th><th>Views</th><th>Sessions</th></tr></thead>
+        <tbody>${pRows.map(r => `<tr>
+          <td><a href="${r.dimensionValues[0].value}" target="_blank" style="color:var(--green);text-decoration:none;">${r.dimensionValues[0].value}</a></td>
+          <td>${parseInt(r.metricValues[0].value).toLocaleString()}</td>
+          <td>${parseInt(r.metricValues[1].value).toLocaleString()}</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+    } else {
+      pEl.innerHTML = '<div class="empty-state"><p>No page data yet.</p></div>';
+    }
+
+    // Refresh overview cards with live numbers
+    renderOverview();
+
+    document.getElementById('ga4-loading').style.display = 'none';
+    document.getElementById('ga4-live-section').style.display = 'block';
+
+  } catch (e) {
+    document.getElementById('ga4-loading').style.display = 'none';
+    if (e.message !== 'ga4_expired') {
+      document.getElementById('ga4-live-section').style.display = 'block';
+      console.error('GA4 fetch error:', e);
+      alert('Could not load analytics data. Check the browser console for details.\n\n' + e.message);
+    }
+  }
+}
+
+// ─────────────────────────────────────────
 // TABS
 // ─────────────────────────────────────────
 document.querySelectorAll('.dash-tab').forEach(btn => {
@@ -583,9 +818,9 @@ document.querySelectorAll('.dash-tab').forEach(btn => {
     btn.classList.add('active');
     const tab = btn.dataset.tab;
     document.getElementById('tab-'+tab).classList.add('active');
-    if (tab==='overview') renderOverview();
-    if (tab==='sales') renderSales();
-    if (tab==='analytics') renderAnalyticsDisplay();
+    if (tab === 'overview')   renderOverview();
+    if (tab === 'sales')      renderSales();
+    if (tab === 'analytics')  initAnalyticsTab();
   });
 });
 
@@ -595,7 +830,6 @@ document.querySelectorAll('.dash-tab').forEach(btn => {
 document.getElementById('sale-date').value = todayStr();
 renderOverview();
 renderSales();
-renderAnalyticsDisplay();
 </script>
 </div><!-- end dashboard-root -->
 </body>
