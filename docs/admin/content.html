@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Manager — Inclusive Materials</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    const HASH = '4d21fbba333628e24015e5bc0e04b0cdb22faf60038c77c2ef7a2032aecd2dc9';
+    window.addEventListener('DOMContentLoaded', () => {
+      if (sessionStorage.getItem('im_auth') !== HASH) {
+        window.location.href = '/admin/dashboard.html';
+      } else { initApp(); }
+    });
+    function logout() { sessionStorage.removeItem('im_auth'); window.location.href = '/admin/dashboard.html'; }
+  </script>
+  <style>
+    :root { --green:#1C4A30; --teal:#3DB08A; --amber:#F5A623; --bg:#F7F9F8; --white:#fff; --text:#1a1a1a; --muted:#6b7280; --border:#e5e7eb; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);}
+
+    /* Header */
+    .hdr{background:var(--green);color:#fff;padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;}
+    .hdr__left{display:flex;align-items:center;gap:.75rem;}
+    .hdr h1{font-size:1.1rem;font-weight:600;}
+    .hdr a{color:#fff;opacity:.8;font-size:.82rem;text-decoration:none;}
+    .hdr a:hover{opacity:1;}
+    .hdr__btns{display:flex;align-items:center;gap:.75rem;}
+    .hdr__btns button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:.28rem .7rem;font-size:.8rem;cursor:pointer;}
+
+    /* Quick links */
+    .ql{background:#fff;border-bottom:1px solid var(--border);padding:.6rem 2rem;display:flex;gap:.6rem;flex-wrap:wrap;}
+    .ql a{display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .8rem;border-radius:6px;font-size:.8rem;font-weight:500;text-decoration:none;border:1px solid var(--border);color:var(--text);transition:all .15s;}
+    .ql a:hover{border-color:var(--teal);color:var(--green);}
+
+    /* Sub nav */
+    .subnav{background:#fff;border-bottom:1px solid var(--border);padding:0 2rem;display:flex;}
+    .subnav__btn{padding:.8rem 1.1rem;font-size:.88rem;font-weight:500;cursor:pointer;border:none;border-bottom:2px solid transparent;color:var(--muted);background:none;transition:all .15s;}
+    .subnav__btn.active{color:var(--green);border-bottom-color:var(--teal);}
+    .subnav__btn:hover{color:var(--green);}
+
+    /* Layout */
+    .main{max-width:900px;margin:0 auto;padding:2rem;}
+    .section{display:none;} .section.active{display:block;}
+
+    /* Cards / containers */
+    .box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.5rem;margin-bottom:1.25rem;}
+    .box h2{font-size:1rem;font-weight:700;color:var(--green);margin-bottom:1rem;}
+    .box h3{font-size:.9rem;font-weight:600;color:var(--green);margin-bottom:.75rem;}
+
+    /* List items */
+    .item{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem .5rem;border-bottom:1px solid var(--border);}
+    .item:last-child{border-bottom:none;}
+    .item__info{flex:1;min-width:0;}
+    .item__title{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .item__meta{font-size:.76rem;color:var(--muted);margin-top:.15rem;}
+    .item__actions{display:flex;gap:.4rem;flex-shrink:0;}
+
+    /* Buttons */
+    .btn{padding:.48rem 1rem;border-radius:6px;font-size:.84rem;font-weight:500;cursor:pointer;border:none;transition:all .15s;}
+    .btn--primary{background:var(--green);color:#fff;}
+    .btn--primary:hover{background:#163d27;}
+    .btn--teal{background:var(--teal);color:#fff;}
+    .btn--teal:hover{background:#33a07a;}
+    .btn--outline{background:#fff;color:var(--green);border:1px solid var(--border);}
+    .btn--outline:hover{border-color:var(--teal);}
+    .btn--danger{background:#fee2e2;color:#dc2626;}
+    .btn--danger:hover{background:#fecaca;}
+    .btn--sm{padding:.26rem .6rem;font-size:.76rem;}
+    .btn-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+
+    /* Form */
+    .field{display:flex;flex-direction:column;gap:.28rem;margin-bottom:.85rem;}
+    .field label{font-size:.78rem;font-weight:600;color:var(--muted);}
+    .field input,.field select,.field textarea{padding:.5rem .75rem;border:1px solid var(--border);border-radius:7px;font-size:.875rem;outline:none;transition:border-color .15s;font-family:inherit;}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);}
+    .field textarea{resize:vertical;line-height:1.6;}
+    .field--row{flex-direction:row;align-items:center;gap:.6rem;}
+    .field--row label{margin-bottom:0;font-size:.85rem;color:var(--text);font-weight:500;}
+    .fg2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
+    .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;}
+
+    /* Toggle */
+    .tog{position:relative;width:40px;height:22px;flex-shrink:0;}
+    .tog input{opacity:0;width:0;height:0;}
+    .tog-s{position:absolute;inset:0;background:#d1d5db;border-radius:22px;cursor:pointer;transition:background .2s;}
+    .tog-s:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;}
+    .tog input:checked+.tog-s{background:var(--teal);}
+    .tog input:checked+.tog-s:before{transform:translateX(18px);}
+
+    /* Status messages */
+    .msg{padding:.6rem 1rem;border-radius:8px;font-size:.84rem;margin-top:.75rem;display:none;}
+    .msg.show{display:block;}
+    .msg--ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+    .msg--err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;}
+    .msg--info{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+
+    /* Photo picker */
+    .photo-grid{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem;max-height:160px;overflow-y:auto;padding:.25rem;}
+    .photo-thumb{width:64px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:border-color .15s;}
+    .photo-thumb:hover,.photo-thumb.selected{border-color:var(--teal);}
+
+    /* Markdown preview */
+    .preview-box{background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:1.25rem;font-size:.9rem;line-height:1.75;min-height:80px;margin-top:.5rem;}
+    .preview-box h1,.preview-box h2,.preview-box h3{color:var(--green);margin:.75rem 0 .4rem;}
+    .preview-box p{margin-bottom:.75rem;}
+    .preview-box ul,.preview-box ol{padding-left:1.5rem;margin-bottom:.75rem;}
+    .preview-box img{max-width:100%;border-radius:6px;}
+
+    /* Settings */
+    .info-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.85rem 1rem;font-size:.84rem;color:#166534;margin-bottom:1rem;line-height:1.6;}
+    .info-box a{color:var(--green);font-weight:600;}
+    .steps{font-size:.84rem;color:var(--text);padding-left:1.25rem;line-height:2.2;}
+    .steps code{background:#f3f4f6;padding:.1rem .35rem;border-radius:4px;font-size:.82rem;}
+
+    /* Empty */
+    .empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:.88rem;}
+
+    /* Divider */
+    hr{border:none;border-top:1px solid var(--border);margin:1.1rem 0;}
+
+    @media(max-width:640px){.fg2,.fg3{grid-template-columns:1fr;}.main{padding:1rem;}.hdr{padding:.8rem 1rem;}.subnav{padding:0 1rem;overflow-x:auto;}}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr__left">
+    <img src="/photos/logo2.png" alt="" width="30" height="30" style="border-radius:6px;" />
+    <h1>Content Manager</h1>
+  </div>
+  <div class="hdr__btns">
+    <a href="/admin/dashboard.html">← Dashboard</a>
+    <button onclick="logout()">Sign Out</button>
+  </div>
+</header>
+
+<!-- QUICK LINKS -->
+<div class="ql">
+  <a href="https://analytics.google.com" target="_blank">📊 Analytics</a>
+  <a href="https://payhip.com/dashboard" target="_blank">💰 Payhip</a>
+  <a href="/" target="_blank">↗ Live Site</a>
+</div>
+
+<!-- SUB NAV -->
+<div class="subnav">
+  <button class="subnav__btn active" data-sec="blog">📝 Blog Posts</button>
+  <button class="subnav__btn" data-sec="products">⭐ Products</button>
+  <button class="subnav__btn" data-sec="settings">⚙️ Settings</button>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ───────────── BLOG POSTS ───────────── -->
+  <div id="sec-blog" class="section active">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <h2 style="font-size:1.05rem;font-weight:700;color:var(--green);">Blog Posts</h2>
+      <button class="btn btn--primary" id="new-post-btn">+ New Post</button>
+    </div>
+
+    <!-- FORM (hidden by default) -->
+    <div class="box" id="blog-form-box" style="display:none;">
+      <h2 id="blog-form-title">New Blog Post</h2>
+
+      <div class="field">
+        <label>Title *</label>
+        <input type="text" id="bf-title" placeholder="e.g. 5 Signs Your Child Needs Hand Strengthening" oninput="autoBlogSlug()" />
+      </div>
+      <div class="fg2">
+        <div class="field">
+          <label>Publish Date *</label>
+          <input type="datetime-local" id="bf-date" />
+        </div>
+        <div class="field">
+          <label>Slug (filename) *</label>
+          <input type="text" id="bf-slug" placeholder="auto-generated" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Summary (shown in blog listings)</label>
+        <textarea id="bf-summary" rows="2" placeholder="A short 1–2 sentence description of the article..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Cover Image Path</label>
+        <input type="text" id="bf-image" placeholder="/photos/your-image.jpg" />
+      </div>
+      <div id="bf-photo-grid" class="photo-grid"></div>
+
+      <hr />
+      <div class="field">
+        <label>Article Body (Markdown)</label>
+        <textarea id="bf-body" rows="16" placeholder="Write your article here in Markdown...&#10;&#10;## Heading&#10;&#10;Your paragraph text here.&#10;&#10;- Bullet point one&#10;- Bullet point two"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+        <span style="font-size:.78rem;color:var(--muted);">Preview</span>
+        <button class="btn btn--outline btn--sm" onclick="togglePreview('blog')">Show / Hide Preview</button>
+      </div>
+      <div class="preview-box" id="blog-preview" style="display:none;"></div>
+
+      <hr />
+      <div class="field field--row">
+        <label class="tog"><input type="checkbox" id="bf-published" checked /><span class="tog-s"></span></label>
+        <label for="bf-published">Published (visible on site)</label>
+      </div>
+
+      <div class="btn-row" style="margin-top:.5rem;">
+        <button class="btn btn--primary" id="save-post-btn">💾 Save Post</button>
+        <button class="btn btn--outline" onclick="cancelBlogForm()">Cancel</button>
+        <span class="msg" id="blog-msg"></span>
+      </div>
+    </div>
+
+    <!-- LIST -->
+    <div class="box" id="blog-list-box">
+      <div id="blog-list"><div class="empty">Loading posts…</div></div>
+    </div>
+  </div>
+
+  <!-- ───────────── PRODUCTS ───────────── -->
+  <div id="sec-products" class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <h2 style="font-size:1.05rem;font-weight:700;color:var(--green);">Products</h2>
+      <button class="btn btn--primary" id="new-product-btn">+ New Product</button>
+    </div>
+
+    <!-- FORM -->
+    <div class="box" id="product-form-box" style="display:none;">
+      <h2 id="product-form-title">New Product</h2>
+
+      <div class="field">
+        <label>Title *</label>
+        <input type="text" id="pf-title" placeholder="e.g. Playdough Shape Mats" />
+      </div>
+      <div class="field">
+        <label>Short Description *</label>
+        <textarea id="pf-desc" rows="3" placeholder="A brief description shown on the shop and home page..."></textarea>
+      </div>
+      <div class="fg3">
+        <div class="field">
+          <label>Price *</label>
+          <input type="text" id="pf-price" placeholder="$4.99" />
+        </div>
+        <div class="field">
+          <label>Badge Label</label>
+          <input type="text" id="pf-badge" placeholder="Featured" value="Featured" />
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="pf-category">
+            <option value="all">All</option>
+            <option value="fine-motor">Fine Motor</option>
+            <option value="iep">IEP</option>
+            <option value="visual">Visual</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Audience (space-separated: sped ot speech general — or leave blank for all)</label>
+        <input type="text" id="pf-audience" placeholder="sped ot" />
+      </div>
+
+      <div class="field">
+        <label>Cover Image Path</label>
+        <input type="text" id="pf-image" placeholder="/photos/your-image.png" />
+      </div>
+      <div id="pf-photo-grid" class="photo-grid"></div>
+
+      <div class="field" style="margin-top:.75rem;">
+        <label>Shop / Buy Link (Payhip URL) *</label>
+        <input type="text" id="pf-url" placeholder="https://payhip.com/b/XXXXX" />
+      </div>
+
+      <hr />
+      <div class="field field--row">
+        <label class="tog"><input type="checkbox" id="pf-featured" checked /><span class="tog-s"></span></label>
+        <label for="pf-featured">Show on Homepage (Featured)</label>
+      </div>
+
+      <div class="btn-row" style="margin-top:.5rem;">
+        <button class="btn btn--primary" id="save-product-btn">💾 Save Product</button>
+        <button class="btn btn--outline" onclick="cancelProductForm()">Cancel</button>
+        <span class="msg" id="product-msg"></span>
+      </div>
+    </div>
+
+    <!-- LIST -->
+    <div class="box" id="product-list-box">
+      <div id="product-list"><div class="empty">Loading products…</div></div>
+    </div>
+  </div>
+
+  <!-- ───────────── SETTINGS ───────────── -->
+  <div id="sec-settings" class="section">
+    <div class="box">
+      <h2>GitHub Token</h2>
+      <div class="info-box">
+        A GitHub Personal Access Token lets this page save your content directly to your repository. It is stored only in your browser and never sent anywhere else.
+      </div>
+      <p style="font-size:.84rem;color:var(--text);margin-bottom:.85rem;font-weight:600;">How to create your token:</p>
+      <ol class="steps">
+        <li>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank" style="color:var(--green);font-weight:600;">github.com → Settings → Developer Settings → Fine-grained tokens</a></li>
+        <li>Click <strong>Generate new token</strong></li>
+        <li>Give it a name like <code>inclusive-materials-cms</code></li>
+        <li>Under <strong>Repository access</strong>, choose <strong>Only select repositories</strong> → pick <code>inclusive.materials</code></li>
+        <li>Under <strong>Permissions → Repository permissions</strong>, set <strong>Contents</strong> to <strong>Read and write</strong></li>
+        <li>Click <strong>Generate token</strong> and copy it</li>
+      </ol>
+      <hr />
+      <div class="field">
+        <label>Paste your GitHub Token here</label>
+        <input type="password" id="gh-token-input" placeholder="github_pat_…" autocomplete="off" />
+      </div>
+      <div class="btn-row">
+        <button class="btn btn--primary" id="save-token-btn">Save Token</button>
+        <button class="btn btn--danger btn--sm" id="clear-token-btn">Clear Token</button>
+        <span class="msg" id="token-msg"></span>
+      </div>
+      <p style="font-size:.76rem;color:var(--muted);margin-top:.75rem;">Token is saved in your browser's local storage. If you clear browser data, you'll need to re-enter it.</p>
+    </div>
+
+    <div class="box">
+      <h2>About Content Storage</h2>
+      <p style="font-size:.84rem;color:var(--muted);line-height:1.8;">
+        📝 <strong>Blog posts</strong> are saved as <code>.md</code> files in <code>docs/_data/blog/</code><br/>
+        ⭐ <strong>Products</strong> are saved as <code>.json</code> files in <code>docs/_data/resources/</code><br/>
+        🖼️ <strong>Photos</strong> are stored in <code>docs/photos/</code> — upload new photos via GitHub directly<br/>
+        ⚡ Changes go live within <strong>1–2 minutes</strong> after saving (GitHub Pages rebuild)
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const GH_REPO = 'inclusive-materials/inclusive.materials';
+const GH_BRANCH = 'main';
+
+// ── Token ──
+function getToken() { return localStorage.getItem('im_gh_token') || ''; }
+
+// ── GitHub API ──
+async function gh(path, method = 'GET', body = null) {
+  const token = getToken();
+  const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (body) headers['Content-Type'] = 'application/json';
+  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+    method, headers, body: body ? JSON.stringify(body) : null
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `GitHub error ${res.status}`);
+  return data;
+}
+
+async function listFiles(dir) {
+  const r = await gh(`${dir}?ref=${GH_BRANCH}`);
+  return Array.isArray(r) ? r : [];
+}
+
+async function readFile(path) {
+  const f = await gh(`${path}?ref=${GH_BRANCH}`);
+  return { content: decodeURIComponent(escape(atob(f.content.replace(/\n/g, '')))), sha: f.sha };
+}
+
+async function writeFile(path, content, message, sha = null) {
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: GH_BRANCH };
+  if (sha) body.sha = sha;
+  return gh(path, 'PUT', body);
+}
+
+async function removeFile(path, message, sha) {
+  return gh(path, 'DELETE', { message, sha, branch: GH_BRANCH });
+}
+
+// ── Helpers ──
+function slugify(s) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+function todayDT() { const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = `msg msg--${type} show`;
+  if (type === 'ok') setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── Photos ──
+let photos = [];
+async function loadPhotos() {
+  try {
+    const files = await listFiles('docs/photos');
+    photos = files.filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name)).map(f => f.name);
+  } catch { photos = []; }
+}
+
+function renderPhotoGrid(gridId, inputId) {
+  const grid = document.getElementById(gridId);
+  if (!photos.length) { grid.innerHTML = ''; return; }
+  grid.innerHTML = photos.map(name =>
+    `<img src="/photos/${name}" class="photo-thumb" title="${name}"
+      onclick="selectPhoto('${inputId}','${gridId}','/photos/${name}',this)" />`
+  ).join('');
+}
+
+function selectPhoto(inputId, gridId, path, el) {
+  document.getElementById(inputId).value = path;
+  document.querySelectorAll(`#${gridId} .photo-thumb`).forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── Sub-nav ──
+document.querySelectorAll('.subnav__btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.subnav__btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + btn.dataset.sec).classList.add('active');
+  });
+});
+
+// ── Frontmatter parser ──
+function parseFm(text) {
+  const raw = (text || '').replace(/^﻿/, '');
+  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (!m) return { meta: {}, body: raw };
+  const meta = {};
+  m[1].split(/\r?\n/).forEach(line => {
+    const idx = line.indexOf(':'); if (idx === -1) return;
+    let k = line.slice(0,idx).trim(), v = line.slice(idx+1).trim();
+    if ((v.startsWith('"')&&v.endsWith('"'))||(v.startsWith("'")&&v.endsWith("'"))) v = v.slice(1,-1);
+    if (v === 'true') v = true; if (v === 'false') v = false;
+    meta[k] = v;
+  });
+  return { meta, body: m[2] || '' };
+}
+
+function buildBlogMd({ title, date, summary, image, published, body }) {
+  return `---\ntitle: ${JSON.stringify(title)}\ndate: ${JSON.stringify(date)}\nsummary: ${JSON.stringify(summary||'')}\nimage: ${JSON.stringify(image||'')}\npublished: ${!!published}\n---\n\n${body||''}`;
+}
+
+// ════════════════════════════════
+// BLOG POSTS
+// ════════════════════════════════
+let blogEditSha = null;
+let blogEditPath = null;
+
+function autoBlogSlug() {
+  if (!blogEditPath) { // only auto on new post
+    const title = document.getElementById('bf-title').value;
+    const date = (document.getElementById('bf-date').value || todayDT()).slice(0,10);
+    document.getElementById('bf-slug').value = `${date}-${slugify(title)}`;
+  }
+}
+
+document.getElementById('new-post-btn').addEventListener('click', () => {
+  blogEditSha = null; blogEditPath = null;
+  document.getElementById('bf-title').value = '';
+  document.getElementById('bf-date').value = todayDT();
+  document.getElementById('bf-slug').value = '';
+  document.getElementById('bf-summary').value = '';
+  document.getElementById('bf-image').value = '';
+  document.getElementById('bf-body').value = '';
+  document.getElementById('bf-published').checked = true;
+  document.getElementById('blog-preview').style.display = 'none';
+  document.getElementById('blog-form-title').textContent = 'New Blog Post';
+  document.getElementById('blog-msg').className = 'msg';
+  renderPhotoGrid('bf-photo-grid', 'bf-image');
+  document.getElementById('blog-form-box').style.display = 'block';
+  document.getElementById('bf-title').focus();
+  document.getElementById('blog-form-box').scrollIntoView({ behavior:'smooth' });
+});
+
+function cancelBlogForm() {
+  document.getElementById('blog-form-box').style.display = 'none';
+  blogEditSha = null; blogEditPath = null;
+}
+
+function togglePreview(type) {
+  if (type === 'blog') {
+    const el = document.getElementById('blog-preview');
+    const body = document.getElementById('bf-body').value;
+    el.innerHTML = marked.parse(body || '*Nothing to preview yet.*');
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+document.getElementById('save-post-btn').addEventListener('click', async () => {
+  const title = document.getElementById('bf-title').value.trim();
+  const date = document.getElementById('bf-date').value;
+  const slug = document.getElementById('bf-slug').value.trim() || `${date.slice(0,10)}-${slugify(title)}`;
+  const summary = document.getElementById('bf-summary').value.trim();
+  const image = document.getElementById('bf-image').value.trim();
+  const body = document.getElementById('bf-body').value;
+  const published = document.getElementById('bf-published').checked;
+
+  if (!title || !date) { showMsg('blog-msg', 'Title and date are required.', 'err'); return; }
+  if (!getToken()) { showMsg('blog-msg', 'No GitHub token — go to Settings tab.', 'err'); return; }
+
+  const filename = slug.endsWith('.md') ? slug : `${slug}.md`;
+  const path = `docs/_data/blog/${filename}`;
+  const content = buildBlogMd({ title, date: new Date(date).toISOString(), summary, image, published, body });
+
+  showMsg('blog-msg', 'Saving…', 'info');
+  try {
+    await writeFile(path, content, `${blogEditSha ? 'Update' : 'Add'} blog post: ${title}`, blogEditSha);
+    showMsg('blog-msg', '✓ Post saved! Site updates in ~1 min.', 'ok');
+    cancelBlogForm();
+    loadBlogPosts();
+  } catch (e) { showMsg('blog-msg', `Error: ${e.message}`, 'err'); }
+});
+
+window.editPost = async function(path) {
+  showMsg('blog-msg', 'Loading…', 'info');
+  document.getElementById('blog-form-box').style.display = 'block';
+  document.getElementById('blog-form-box').scrollIntoView({ behavior:'smooth' });
+  try {
+    const { content, sha } = await readFile(path);
+    const { meta, body } = parseFm(content);
+    blogEditSha = sha; blogEditPath = path;
+    document.getElementById('bf-title').value = meta.title || '';
+    const dt = meta.date ? new Date(meta.date) : new Date();
+    dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+    document.getElementById('bf-date').value = dt.toISOString().slice(0,16);
+    document.getElementById('bf-slug').value = path.split('/').pop().replace(/\.md$/,'');
+    document.getElementById('bf-summary').value = meta.summary || '';
+    document.getElementById('bf-image').value = meta.image || '';
+    document.getElementById('bf-body').value = body;
+    document.getElementById('bf-published').checked = meta.published !== false;
+    document.getElementById('blog-form-title').textContent = 'Edit Blog Post';
+    document.getElementById('blog-preview').style.display = 'none';
+    document.getElementById('blog-msg').className = 'msg';
+    renderPhotoGrid('bf-photo-grid', 'bf-image');
+  } catch(e) { showMsg('blog-msg', `Error loading: ${e.message}`, 'err'); }
+};
+
+window.deletePost = async function(path, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  if (!getToken()) { alert('No GitHub token — go to Settings tab.'); return; }
+  try {
+    const { sha } = await readFile(path);
+    await removeFile(path, `Delete blog post: ${title}`, sha);
+    loadBlogPosts();
+  } catch(e) { alert(`Error: ${e.message}`); }
+};
+
+async function loadBlogPosts() {
+  const el = document.getElementById('blog-list');
+  el.innerHTML = '<div class="empty">Loading…</div>';
+  try {
+    const files = await listFiles('docs/_data/blog');
+    const mdFiles = files.filter(f => f.name.endsWith('.md')).reverse();
+    if (!mdFiles.length) { el.innerHTML = '<div class="empty">No blog posts yet. Click "+ New Post" to create one.</div>'; return; }
+
+    // Load metadata for each post
+    const posts = await Promise.all(mdFiles.map(async f => {
+      try {
+        const { content } = await readFile(`docs/_data/blog/${f.name}`);
+        const { meta } = parseFm(content);
+        return { name: f.name, path: `docs/_data/blog/${f.name}`, title: meta.title || f.name, date: meta.date || '', published: meta.published !== false };
+      } catch { return { name: f.name, path: `docs/_data/blog/${f.name}`, title: f.name, date: '', published: true }; }
+    }));
+
+    el.innerHTML = posts.map(p => `
+      <div class="item">
+        <div class="item__info">
+          <div class="item__title">${p.title}</div>
+          <div class="item__meta">${p.date ? new Date(p.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—'}
+            &nbsp;·&nbsp; ${p.published ? '<span style="color:#16a34a">Published</span>' : '<span style="color:#9ca3af">Draft</span>'}
+          </div>
+        </div>
+        <div class="item__actions">
+          <button class="btn btn--outline btn--sm" onclick="editPost('${p.path}')">Edit</button>
+          <button class="btn btn--danger btn--sm" onclick="deletePost('${p.path}','${p.title.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = `<div class="empty">Error loading posts: ${e.message}</div>`; }
+}
+
+// ════════════════════════════════
+// PRODUCTS
+// ════════════════════════════════
+let prodEditSha = null;
+let prodEditPath = null;
+
+document.getElementById('new-product-btn').addEventListener('click', () => {
+  prodEditSha = null; prodEditPath = null;
+  ['pf-title','pf-desc','pf-image','pf-url','pf-audience'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pf-price').value = '';
+  document.getElementById('pf-badge').value = 'Featured';
+  document.getElementById('pf-category').value = 'all';
+  document.getElementById('pf-featured').checked = true;
+  document.getElementById('product-msg').className = 'msg';
+  document.getElementById('product-form-title').textContent = 'New Product';
+  renderPhotoGrid('pf-photo-grid', 'pf-image');
+  document.getElementById('product-form-box').style.display = 'block';
+  document.getElementById('pf-title').focus();
+  document.getElementById('product-form-box').scrollIntoView({ behavior:'smooth' });
+});
+
+function cancelProductForm() {
+  document.getElementById('product-form-box').style.display = 'none';
+  prodEditSha = null; prodEditPath = null;
+}
+
+document.getElementById('save-product-btn').addEventListener('click', async () => {
+  const title = document.getElementById('pf-title').value.trim();
+  const description = document.getElementById('pf-desc').value.trim();
+  const price = document.getElementById('pf-price').value.trim();
+  const badge = document.getElementById('pf-badge').value.trim();
+  const image = document.getElementById('pf-image').value.trim();
+  const url = document.getElementById('pf-url').value.trim();
+  const audience = document.getElementById('pf-audience').value.trim() || 'all';
+  const category = document.getElementById('pf-category').value;
+  const featured = document.getElementById('pf-featured').checked;
+
+  if (!title || !price || !url) { showMsg('product-msg', 'Title, price and shop link are required.', 'err'); return; }
+  if (!getToken()) { showMsg('product-msg', 'No GitHub token — go to Settings tab.', 'err'); return; }
+
+  const filename = prodEditPath ? prodEditPath.split('/').pop() : `${slugify(title)}.json`;
+  const path = `docs/_data/resources/${filename}`;
+  const content = JSON.stringify({ title, description, price, badge, image, url, featured, audience, category }, null, 2);
+
+  showMsg('product-msg', 'Saving…', 'info');
+  try {
+    await writeFile(path, content, `${prodEditSha ? 'Update' : 'Add'} product: ${title}`, prodEditSha);
+    showMsg('product-msg', '✓ Product saved! Site updates in ~1 min.', 'ok');
+    cancelProductForm();
+    loadProducts();
+  } catch(e) { showMsg('product-msg', `Error: ${e.message}`, 'err'); }
+});
+
+window.editProduct = async function(path) {
+  showMsg('product-msg', 'Loading…', 'info');
+  document.getElementById('product-form-box').style.display = 'block';
+  document.getElementById('product-form-box').scrollIntoView({ behavior:'smooth' });
+  try {
+    const { content, sha } = await readFile(path);
+    const p = JSON.parse(content);
+    prodEditSha = sha; prodEditPath = path;
+    document.getElementById('pf-title').value = p.title || '';
+    document.getElementById('pf-desc').value = p.description || '';
+    document.getElementById('pf-price').value = p.price || '';
+    document.getElementById('pf-badge').value = p.badge || 'Featured';
+    document.getElementById('pf-image').value = p.image || '';
+    document.getElementById('pf-url').value = p.url || '';
+    document.getElementById('pf-audience').value = p.audience || 'all';
+    document.getElementById('pf-category').value = p.category || 'all';
+    document.getElementById('pf-featured').checked = p.featured !== false;
+    document.getElementById('product-form-title').textContent = 'Edit Product';
+    document.getElementById('product-msg').className = 'msg';
+    renderPhotoGrid('pf-photo-grid', 'pf-image');
+  } catch(e) { showMsg('product-msg', `Error loading: ${e.message}`, 'err'); }
+};
+
+window.deleteProduct = async function(path, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  if (!getToken()) { alert('No GitHub token — go to Settings tab.'); return; }
+  try {
+    const { sha } = await readFile(path);
+    await removeFile(path, `Delete product: ${title}`, sha);
+    loadProducts();
+  } catch(e) { alert(`Error: ${e.message}`); }
+};
+
+async function loadProducts() {
+  const el = document.getElementById('product-list');
+  el.innerHTML = '<div class="empty">Loading…</div>';
+  try {
+    const files = await listFiles('docs/_data/resources');
+    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+    if (!jsonFiles.length) { el.innerHTML = '<div class="empty">No products yet. Click "+ New Product" to add one.</div>'; return; }
+
+    const products = await Promise.all(jsonFiles.map(async f => {
+      try {
+        const { content } = await readFile(`docs/_data/resources/${f.name}`);
+        const p = JSON.parse(content);
+        return { name: f.name, path: `docs/_data/resources/${f.name}`, title: p.title || f.name, price: p.price || '', featured: p.featured !== false };
+      } catch { return { name: f.name, path: `docs/_data/resources/${f.name}`, title: f.name, price: '', featured: true }; }
+    }));
+
+    el.innerHTML = products.map(p => `
+      <div class="item">
+        <div class="item__info">
+          <div class="item__title">${p.title}</div>
+          <div class="item__meta">${p.price}&nbsp;·&nbsp;${p.featured ? '<span style="color:#16a34a">Featured on homepage</span>' : 'Not featured'}</div>
+        </div>
+        <div class="item__actions">
+          <button class="btn btn--outline btn--sm" onclick="editProduct('${p.path}')">Edit</button>
+          <button class="btn btn--danger btn--sm" onclick="deleteProduct('${p.path}','${p.title.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { el.innerHTML = `<div class="empty">Error loading products: ${e.message}</div>`; }
+}
+
+// ════════════════════════════════
+// SETTINGS
+// ════════════════════════════════
+document.getElementById('save-token-btn').addEventListener('click', () => {
+  const t = document.getElementById('gh-token-input').value.trim();
+  if (!t) { showMsg('token-msg', 'Please enter a token.', 'err'); return; }
+  localStorage.setItem('im_gh_token', t);
+  document.getElementById('gh-token-input').value = '';
+  showMsg('token-msg', '✓ Token saved!', 'ok');
+});
+
+document.getElementById('clear-token-btn').addEventListener('click', () => {
+  if (!confirm('Remove saved GitHub token?')) return;
+  localStorage.removeItem('im_gh_token');
+  showMsg('token-msg', 'Token cleared.', 'info');
+});
+
+// ── Init ──
+async function initApp() {
+  await loadPhotos();
+  renderPhotoGrid('bf-photo-grid', 'bf-image');
+  renderPhotoGrid('pf-photo-grid', 'pf-image');
+  loadBlogPosts();
+  loadProducts();
+  if (getToken()) {
+    document.getElementById('gh-token-input').placeholder = '••••••• (token already saved)';
+  }
+}
+</script>
+</body>
+</html>
