@@ -169,7 +169,7 @@
         escapeHtml(r.image) +
         '" alt="' +
         escapeHtml(r.title) +
-        '" loading="lazy" style="width:100%;height:220px;object-fit:contain;background:#f5f7f5;display:block;"/>';
+        '" loading="lazy" style="width:100%;height:220px;object-fit:cover;object-position:top;display:block;"/>';
     }
     var badgeHtml = r.badge
       ? '<span class="product-card__badge">' + escapeHtml(r.badge) + '</span>'
