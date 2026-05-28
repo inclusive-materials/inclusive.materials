@@ -662,14 +662,11 @@
       window.loadBlogPosts().then(function (posts) {
         var container = document.getElementById('blog-listing-container');
         if (!container || !posts.length) return;
+        // If static pre-rendered cards are already in the HTML, skip JS injection
+        // entirely — no swap, no flash, no glitch possible.
+        if (container.querySelector('article')) return;
         var html = posts.map(blogRowHtml).join('');
-        if (html) {
-          container.innerHTML = html;
-          // Fade in smoothly — CSS starts container at opacity:0
-          requestAnimationFrame(function () {
-            container.style.opacity = '1';
-          });
-        }
+        if (html) container.innerHTML = html;
       });
     } else if (base === 'blog-post.html' || base === 'blog-post') {
       loadBlogArticlePage();

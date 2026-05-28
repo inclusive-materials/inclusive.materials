@@ -1,5 +1,6 @@
 # Keeps docs/_data/blog/manifest.json in sync when CMS adds .md posts.
-# The static site uses this file when the GitHub API is blocked (ad blockers, rate limits).
+# Also pre-renders the blog listing cards as static HTML into docs/blog/index.html
+# so the /blog/ page loads with zero JavaScript and zero flash.
 name: Update blog manifest
 
 on:
@@ -18,25 +19,119 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Regenerate manifest.json
+      - name: Regenerate manifest and blog listing HTML
         run: |
           python3 << 'PY'
-          import json, glob, os
-          d = "docs/_data/blog"
-          files = sorted(os.path.basename(p) for p in glob.glob(os.path.join(d, "*.md")))
-          out = os.path.join(d, "manifest.json")
+          import json, glob, os, re
+          import html as htmllib
+          from datetime import datetime
+
+          BLOG_DIR   = "docs/_data/blog"
+          BLOG_INDEX = "docs/blog/index.html"
+
+          DATE_ICON = (
+            '<svg width="13" height="13" viewBox="0 0 13 13" fill="none">'
+            '<circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.2"/>'
+            '<path d="M6.5 4V6.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>'
+            '</svg>'
+          )
+          ARTICLE_ICON = (
+            '<svg width="32" height="32" viewBox="0 0 32 32" fill="none">'
+            '<path d="M8 8h16M8 14h16M8 20h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'
+            '</svg>'
+          )
+
+          def parse_frontmatter(text):
+              m = re.match(r'^---\s*\n(.*?)\n---', text, re.DOTALL)
+              if not m:
+                  return {}
+              meta = {}
+              for line in m.group(1).splitlines():
+                  line = line.strip()
+                  if ':' not in line:
+                      continue
+                  key, _, val = line.partition(':')
+                  key = key.strip()
+                  val = val.strip()
+                  if len(val) >= 2 and val[0] in ('"', "'") and val[-1] == val[0]:
+                      val = val[1:-1]
+                  meta[key] = val
+              return meta
+
+          def format_date(iso_date):
+              try:
+                  d = datetime.strptime(iso_date.rstrip('Z').split('.')[0], '%Y-%m-%dT%H:%M:%S')
+                  return d.strftime('%B ') + str(d.day) + d.strftime(', %Y')
+              except Exception:
+                  return iso_date
+
+          def build_article_row(slug, meta):
+              image    = meta.get('image', '')
+              date_str = format_date(meta.get('date', ''))
+              title    = meta.get('title', '')
+              summary  = meta.get('summary', '')
+              url      = '/blog-post/?post=' + slug
+
+              img_html = (
+                  '<img src="' + htmllib.escape(image) +
+                  '" alt="" loading="lazy" width="320" height="200"/>'
+                  if image else ARTICLE_ICON
+              )
+              return (
+                  '<article class="article-row" id="post-' + htmllib.escape(slug) + '">'
+                  '<div class="article-row__img">' + img_html + '</div>'
+                  '<div>'
+                  '<div class="article-row__date">' + DATE_ICON + htmllib.escape(date_str) + '</div>'
+                  '<h2>' + htmllib.escape(title) + '</h2>'
+                  '<p>' + htmllib.escape(summary) + '</p>'
+                  '<a href="' + url + '" class="read-more">Read More →</a>'
+                  '</div></article>'
+              )
+
+          # ── collect all published posts ──────────────────────────────────
+          posts = []
+          for path in sorted(glob.glob(os.path.join(BLOG_DIR, "*.md"))):
+              name = os.path.basename(path)
+              text = open(path, encoding='utf-8').read()
+              meta = parse_frontmatter(text)
+              if str(meta.get('published', 'false')).lower() not in ('true', '1', 'yes'):
+                  continue
+              slug = re.sub(r'\.md$', '', name)
+              posts.append({'slug': slug, 'name': name, 'meta': meta,
+                            'date': meta.get('date', '')})
+
+          # newest first for listing; alphabetical for manifest
+          posts.sort(key=lambda p: p['date'], reverse=True)
+          manifest_files = sorted(p['name'] for p in posts)
+
+          # ── 1. update manifest.json ──────────────────────────────────────
+          out = os.path.join(BLOG_DIR, "manifest.json")
           with open(out, "w", encoding="utf-8") as f:
-              json.dump({"files": files}, f, indent=2)
+              json.dump({"files": manifest_files}, f, indent=2)
               f.write("\n")
+
+          # ── 2. inject static listing HTML into blog/index.html ───────────
+          if os.path.exists(BLOG_INDEX):
+              cards_html = '\n'.join(build_article_row(p['slug'], p['meta']) for p in posts)
+              with open(BLOG_INDEX, 'r', encoding='utf-8') as f:
+                  content = f.read()
+              new_content = re.sub(
+                  r'<!-- BLOG-LISTING-START -->.*?<!-- BLOG-LISTING-END -->',
+                  '<!-- BLOG-LISTING-START -->\n' + cards_html + '\n<!-- BLOG-LISTING-END -->',
+                  content, flags=re.DOTALL
+              )
+              if new_content != content:
+                  with open(BLOG_INDEX, 'w', encoding='utf-8') as f:
+                      f.write(new_content)
           PY
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/_data/blog/manifest.json
+          git add docs/_data/blog/manifest.json docs/blog/index.html
           if git diff --staged --quiet; then
-            echo "No manifest changes."
+            echo "No changes."
           else
-            git commit -m "chore: update blog manifest"
+            git commit -m "chore: update blog manifest and listing"
             git push
           fi
