@@ -35,6 +35,7 @@
     window.addEventListener('DOMContentLoaded', checkAuth);
   </script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <!-- Google Identity Services — for GA4 OAuth -->
   <script src="https://accounts.google.com/gsi/client" async defer onload="onGISLoad()"></script>
   <style>
@@ -151,6 +152,47 @@
     .setup-steps code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--text); }
     .setup-steps a { color: var(--green); font-weight: 500; }
 
+    /* ── Content Manager panels ── */
+    .btn--outline{background:#fff;color:var(--green);border:1px solid var(--border);}
+    .btn--outline:hover{border-color:var(--teal);}
+    .btn-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+    .box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.5rem;margin-bottom:1.25rem;}
+    .box h2{font-size:1rem;font-weight:700;color:var(--green);margin-bottom:1rem;}
+    .item{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem .5rem;border-bottom:1px solid var(--border);}
+    .item:last-child{border-bottom:none;}
+    .item__info{flex:1;min-width:0;}
+    .item__title{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .item__meta{font-size:.76rem;color:var(--muted);margin-top:.15rem;}
+    .item__actions{display:flex;gap:.4rem;flex-shrink:0;}
+    .field{display:flex;flex-direction:column;gap:.28rem;margin-bottom:.85rem;}
+    .field label{font-size:.78rem;font-weight:600;color:var(--muted);}
+    .field input,.field select,.field textarea{padding:.5rem .75rem;border:1px solid var(--border);border-radius:7px;font-size:.875rem;outline:none;transition:border-color .15s;font-family:inherit;}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);}
+    .field textarea{resize:vertical;line-height:1.6;}
+    .field--row{flex-direction:row;align-items:center;gap:.6rem;}
+    .field--row label{margin-bottom:0;font-size:.85rem;color:var(--text);font-weight:500;}
+    .fg2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;}
+    .fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;}
+    .tog{position:relative;width:40px;height:22px;flex-shrink:0;}
+    .tog input{opacity:0;width:0;height:0;}
+    .tog-s{position:absolute;inset:0;background:#d1d5db;border-radius:22px;cursor:pointer;transition:background .2s;}
+    .tog-s:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s;}
+    .tog input:checked+.tog-s{background:var(--teal);}
+    .tog input:checked+.tog-s:before{transform:translateX(18px);}
+    .cm-msg{padding:.6rem 1rem;border-radius:8px;font-size:.84rem;margin-top:.75rem;display:none;}
+    .cm-msg.show{display:block;}
+    .cm-msg--ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+    .cm-msg--err{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;}
+    .cm-msg--info{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+    .photo-grid{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem;max-height:160px;overflow-y:auto;padding:.25rem;}
+    .photo-thumb{width:64px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:border-color .15s;}
+    .photo-thumb:hover,.photo-thumb.selected{border-color:var(--teal);}
+    .preview-box{background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:1.25rem;font-size:.9rem;line-height:1.75;min-height:80px;margin-top:.5rem;}
+    .cm-empty{text-align:center;padding:2.5rem 1rem;color:var(--muted);font-size:.88rem;}
+    .cm-info-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:.85rem 1rem;font-size:.84rem;color:#166534;margin-bottom:1rem;line-height:1.6;}
+    .cm-steps{font-size:.84rem;color:var(--text);padding-left:1.25rem;line-height:2.2;}
+    .cm-steps code{background:#f3f4f6;padding:.1rem .35rem;border-radius:4px;font-size:.82rem;}
+
     @media (max-width: 768px) {
       .charts-row { grid-template-columns: 1fr; }
       .sidebar{width:100%;height:56px;flex-direction:row;align-items:center;bottom:auto;overflow:hidden;padding:0 1rem;}
@@ -201,8 +243,9 @@
       <span id="content-chevron" style="font-size:.65rem;opacity:.6;transition:transform .25s;">▼</span>
     </button>
     <div id="content-submenu" style="display:none;">
-      <a href="/admin/content/#blog" class="sb-link" style="padding-left:2rem;font-size:.82rem;">📝 Blog Posts</a>
-      <a href="/admin/content/#products" class="sb-link" style="padding-left:2rem;font-size:.82rem;">⭐ Product Listing</a>
+      <button onclick="switchToTab('blog')" class="sb-link" style="width:100%;border:none;background:transparent;color:rgba(255,255,255,.7);cursor:pointer;text-align:left;padding-left:2rem;font-size:.82rem;">📝 Blog Posts</button>
+      <button onclick="switchToTab('products')" class="sb-link" style="width:100%;border:none;background:transparent;color:rgba(255,255,255,.7);cursor:pointer;text-align:left;padding-left:2rem;font-size:.82rem;">⭐ Product Listing</button>
+      <button onclick="switchToTab('cms-settings')" class="sb-link" style="width:100%;border:none;background:transparent;color:rgba(255,255,255,.7);cursor:pointer;text-align:left;padding-left:2rem;font-size:.82rem;">⚙️ CMS Settings</button>
     </div>
     <a href="/" target="_blank" class="sb-link">↗ Live Site</a>
   </nav>
@@ -383,6 +426,179 @@
     </div>
 
   </div><!-- end tab-analytics -->
+
+  <!-- ─────────────── BLOG POSTS ─────────────── -->
+  <div id="tab-blog" class="tab-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <h2 style="font-size:1.05rem;font-weight:700;color:var(--green);">Blog Posts</h2>
+      <button class="btn btn--primary" id="new-post-btn">+ New Post</button>
+    </div>
+    <div class="box" id="blog-form-box" style="display:none;">
+      <h2 id="blog-form-title">New Blog Post</h2>
+      <div class="field"><label>Title *</label><input type="text" id="bf-title" placeholder="e.g. 5 Signs Your Child Needs Hand Strengthening" oninput="autoBlogSlug()" /></div>
+      <div class="fg2">
+        <div class="field"><label>Publish Date *</label><input type="datetime-local" id="bf-date" /></div>
+        <div class="field"><label>Slug (filename) *</label><input type="text" id="bf-slug" placeholder="auto-generated" /></div>
+      </div>
+      <div class="field"><label>Summary (shown in blog listings)</label><textarea id="bf-summary" rows="2" placeholder="A short 1–2 sentence description..."></textarea></div>
+      <div class="field"><label>Cover Image Path</label><input type="text" id="bf-image" placeholder="/photos/your-image.jpg" /></div>
+      <div id="bf-photo-grid" class="photo-grid"></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:1.1rem 0;" />
+      <div class="field"><label>Article Body (Markdown)</label><textarea id="bf-body" rows="16" placeholder="Write your article here in Markdown...&#10;&#10;## Heading&#10;&#10;Your paragraph text."></textarea></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+        <span style="font-size:.78rem;color:var(--muted);">Preview</span>
+        <button class="btn btn--outline btn--sm" onclick="toggleBlogPreview()">Show / Hide Preview</button>
+      </div>
+      <div class="preview-box" id="blog-preview" style="display:none;"></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:1.1rem 0;" />
+      <div class="field field--row">
+        <label class="tog"><input type="checkbox" id="bf-published" checked /><span class="tog-s"></span></label>
+        <label for="bf-published">Published (visible on site)</label>
+      </div>
+      <div class="btn-row" style="margin-top:.5rem;">
+        <button class="btn btn--primary" id="save-post-btn">💾 Save Post</button>
+        <button class="btn btn--outline" onclick="cancelBlogForm()">Cancel</button>
+        <span class="cm-msg" id="blog-msg"></span>
+      </div>
+    </div>
+    <div class="box" id="blog-list-box">
+      <div id="blog-list"><div class="cm-empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ─────────────── PRODUCT LISTING ─────────────── -->
+  <div id="tab-products" class="tab-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+      <h2 style="font-size:1.05rem;font-weight:700;color:var(--green);">Product Listing</h2>
+      <button class="btn btn--primary" id="new-product-btn">+ New Product</button>
+    </div>
+    <div class="box" id="product-form-box" style="display:none;">
+      <h2 id="product-form-title">New Product</h2>
+      <div class="field"><label>Title *</label><input type="text" id="pf-title" placeholder="e.g. Playdough Shape Mats" /></div>
+      <div class="field"><label>Short Description *</label><textarea id="pf-desc" rows="3" placeholder="A brief description shown on the shop and home page..."></textarea></div>
+      <div class="fg2">
+        <div class="field"><label>Price *</label><input type="text" id="pf-price" placeholder="4.99" /></div>
+        <div class="field"><label>Original Price <span style="font-weight:400;color:#9ca3af;font-size:.8rem;">(optional — for discount display)</span></label><input type="text" id="pf-original-price" placeholder="e.g. 17.90 — leave blank if no discount" /></div>
+      </div>
+      <div class="fg2" style="margin-top:0;">
+        <div class="field">
+          <label>Badge</label>
+          <select id="pf-badge">
+            <option value="Featured">Featured</option><option value="New">New</option><option value="Best Seller">Best Seller</option>
+            <option value="Free">Free</option><option value="Bundle">Bundle</option><option value="Sale">Sale</option>
+            <option value="OT Pick">OT Pick</option><option value="SPED Resource">SPED Resource</option>
+            <option value="Speech Resource">Speech Resource</option><option value="General Ed">General Ed</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Level <span style="font-weight:400;color:#9ca3af;font-size:.8rem;">(optional — shows as a pill on card)</span></label>
+          <select id="pf-level">
+            <option value="">— No Level —</option><option value="Level 1">Level 1</option>
+            <option value="Level 2">Level 2</option><option value="Level 3">Level 3</option><option value="Level 4">Level 4</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="pf-category">
+          <option value="all">— All Categories —</option>
+          <optgroup label="OT — Fine Motor"><option value="hand strengthening">Hand Strengthening</option><option value="scissor">Scissor Skills</option><option value="pencil grasp">Pencil Grasp &amp; Control</option><option value="in-hand manipulation">In-Hand Manipulation</option><option value="bilateral coordination">Bilateral Coordination</option><option value="pre-writing">Pre-Writing Skills</option><option value="print letter">Print Letter Formation</option><option value="cursive">Cursive Writing</option><option value="spacing">Spacing &amp; Sizing</option></optgroup>
+          <optgroup label="OT — Gross Motor"><option value="core strength">Core Strength &amp; Stability</option><option value="balance">Balance &amp; Coordination</option><option value="proprioception">Body Awareness (Proprioception)</option><option value="motor planning">Motor Planning</option></optgroup>
+          <optgroup label="OT — Sensory"><option value="sensory awareness">Sensory Awareness</option><option value="tactile">Tactile Discrimination</option><option value="vestibular">Vestibular &amp; Movement</option><option value="visual perception">Visual Perception</option><option value="auditory processing">Auditory Processing</option></optgroup>
+          <optgroup label="OT — Visual Motor"><option value="eye-hand">Eye-Hand Coordination</option><option value="copying">Copying &amp; Reproduction</option><option value="visual tracking">Visual Tracking</option></optgroup>
+          <optgroup label="OT — Self-Care"><option value="dressing">Dressing Skills</option><option value="hygiene">Hygiene &amp; Grooming</option><option value="utensil">Eating &amp; Utensil Use</option></optgroup>
+          <optgroup label="OT — Executive Function"><option value="attention">Attention &amp; Focus</option><option value="organization">Organization &amp; Planning</option><option value="problem solving">Problem Solving</option><option value="memory">Working Memory</option></optgroup>
+          <optgroup label="OT — Social &amp; Emotional"><option value="emotion identification">Emotion Identification</option><option value="self-regulation">Self-Regulation</option><option value="social participation">Social Participation</option></optgroup>
+          <optgroup label="Speech — Articulation"><option value="early developing sounds">Early Developing Sounds</option><option value="later developing sounds">Later Developing Sounds</option><option value="phonological">Phonological Processes</option><option value="minimal pair">Minimal Pair Therapy</option></optgroup>
+          <optgroup label="Speech — Language"><option value="receptive language">Receptive Language</option><option value="expressive language">Expressive Language</option><option value="vocabulary">Vocabulary Building</option><option value="sentence structure">Sentence Structure</option></optgroup>
+          <optgroup label="Speech — Fluency"><option value="stuttering">Stuttering Support</option><option value="smooth speech">Smooth Speech Strategies</option></optgroup>
+          <optgroup label="Speech — Social Communication"><option value="pragmatic">Pragmatic Skills</option><option value="conversation">Conversation Skills</option><option value="perspective taking">Perspective Taking</option></optgroup>
+          <optgroup label="Speech — AAC"><option value="core vocabulary">Core Vocabulary</option><option value="symbol-based">Symbol-Based Communication</option><option value="low-tech aac">Low-Tech AAC</option></optgroup>
+          <optgroup label="Speech — Literacy"><option value="phonemic awareness">Phonemic Awareness</option><option value="phonics">Phonics</option><option value="reading fluency">Reading Fluency</option></optgroup>
+          <optgroup label="SPED — Early Intervention"><option value="developmental milestones">Developmental Milestones</option><option value="early cognitive">Early Cognitive Skills</option><option value="sensory play">Sensory Play</option><option value="pre-academic">Pre-Academic Skills</option></optgroup>
+          <optgroup label="SPED — Behavior"><option value="zones of regulation">Zones of Regulation</option><option value="positive behavior">Positive Behavior Supports</option><option value="emotional regulation">Emotional Regulation</option></optgroup>
+          <optgroup label="SPED — Academic Modifications"><option value="reading modifications">Reading Modifications</option><option value="math modifications">Math Modifications</option><option value="written expression">Written Expression Support</option></optgroup>
+          <optgroup label="SPED — Life Skills"><option value="daily living">Daily Living Skills</option><option value="community skills">Community Skills</option><option value="vocational">Vocational Readiness</option></optgroup>
+          <optgroup label="SPED — Social Skills"><option value="peer interaction">Peer Interaction</option><option value="group participation">Group Participation</option><option value="conflict resolution">Conflict Resolution</option></optgroup>
+          <optgroup label="SPED — IEP &amp; Transition"><option value="iep goal">IEP Goal Writing</option><option value="transition to kindergarten">Transition to Kindergarten</option><option value="post-secondary">Post-Secondary Planning</option></optgroup>
+          <optgroup label="General — Early Childhood"><option value="colors shapes">Colors &amp; Shapes</option><option value="basic concepts">Basic Concepts</option><option value="early literacy">Early Literacy</option><option value="number sense">Number Sense</option><option value="print awareness">Print Awareness</option><option value="social skills">Social Skills</option></optgroup>
+          <optgroup label="General — Elementary"><option value="letter recognition">Letter Recognition</option><option value="sight words">Sight Words</option><option value="counting">Counting &amp; Cardinality</option><option value="reading comprehension">Reading Comprehension</option><option value="addition subtraction">Addition &amp; Subtraction</option><option value="writing sentences">Writing Sentences</option><option value="science basics">Science Basics</option></optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tags — Which section of the shop should this appear in?</label>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:.35rem;">
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;font-weight:400;color:var(--text);cursor:pointer;"><input type="checkbox" id="tag-ot" value="ot" /> OT</label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;font-weight:400;color:var(--text);cursor:pointer;"><input type="checkbox" id="tag-speech" value="speech" /> Speech &amp; Language</label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;font-weight:400;color:var(--text);cursor:pointer;"><input type="checkbox" id="tag-sped" value="sped" /> SPED</label>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;font-weight:400;color:var(--text);cursor:pointer;"><input type="checkbox" id="tag-general" value="general" /> General Education</label>
+        </div>
+        <p style="font-size:.74rem;color:var(--muted);margin-top:.35rem;">Tick all that apply. Leave unticked to show in all sections.</p>
+      </div>
+      <div class="field">
+        <label>Cover Image</label>
+        <input type="text" id="pf-image" placeholder="/photos/your-image.png" />
+        <div style="display:flex;align-items:center;gap:.6rem;margin-top:.5rem;flex-wrap:wrap;">
+          <label class="btn btn--teal btn--sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;">⬆ Upload Image <input type="file" id="pf-upload" accept="image/*" style="display:none;" /></label>
+          <span id="upload-status" style="font-size:.78rem;color:var(--muted);"></span>
+        </div>
+      </div>
+      <div id="pf-photo-grid" class="photo-grid"></div>
+      <div class="field" style="margin-top:.75rem;"><label>Shop / Buy Link (Payhip URL) *</label><input type="text" id="pf-url" placeholder="https://payhip.com/b/XXXXX" /></div>
+      <div class="field" style="margin-top:.75rem;">
+        <label>Search Tags <span style="font-weight:400;color:#9ca3af;">(paste keywords buyers would search for)</span></label>
+        <textarea id="pf-search-tags" rows="3" placeholder="e.g. speech language SLP articulation picture word cards early developing sounds p b m toddler preschool printable" style="width:100%;padding:.5rem .65rem;border:1px solid #e5e7eb;border-radius:6px;font-size:.875rem;font-family:inherit;resize:vertical;outline:none;line-height:1.5;"></textarea>
+        <p style="font-size:.75rem;color:#9ca3af;margin-top:.25rem;">These are hidden from buyers but help with search &amp; filtering.</p>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:1.1rem 0;" />
+      <div class="field field--row">
+        <label class="tog"><input type="checkbox" id="pf-featured" checked /><span class="tog-s"></span></label>
+        <label for="pf-featured">Show on Homepage (Featured)</label>
+      </div>
+      <div class="btn-row" style="margin-top:.5rem;">
+        <button class="btn btn--primary" id="save-product-btn">💾 Save Product</button>
+        <button class="btn btn--outline" onclick="cancelProductForm()">Cancel</button>
+        <span class="cm-msg" id="product-msg"></span>
+      </div>
+    </div>
+    <div class="box" id="product-list-box">
+      <div id="product-list"><div class="cm-empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <!-- ─────────────── CMS SETTINGS ─────────────── -->
+  <div id="tab-cms-settings" class="tab-panel">
+    <div class="box">
+      <h2>GitHub Token</h2>
+      <div class="cm-info-box">A GitHub Personal Access Token lets this page save your content directly to your repository. It is stored only in your browser and never sent anywhere else.</div>
+      <p style="font-size:.84rem;color:var(--text);margin-bottom:.85rem;font-weight:600;">How to create your token:</p>
+      <ol class="cm-steps">
+        <li>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank" style="color:var(--green);font-weight:600;">github.com → Settings → Developer Settings → Fine-grained tokens</a></li>
+        <li>Click <strong>Generate new token</strong></li>
+        <li>Give it a name like <code>inclusive-materials-cms</code></li>
+        <li>Under <strong>Repository access</strong> choose <strong>Only select repositories</strong> → pick <code>inclusive.materials</code></li>
+        <li>Under <strong>Permissions → Repository permissions</strong> set <strong>Contents</strong> to <strong>Read and write</strong></li>
+        <li>Click <strong>Generate token</strong> and copy it</li>
+      </ol>
+      <hr style="border:none;border-top:1px solid var(--border);margin:1.1rem 0;" />
+      <div class="field"><label>Paste your GitHub Token here</label><input type="password" id="gh-token-input" placeholder="github_pat_…" autocomplete="off" /></div>
+      <div class="btn-row">
+        <button class="btn btn--primary" id="save-token-btn">Save Token</button>
+        <button class="btn btn--danger btn--sm" id="clear-token-btn">Clear Token</button>
+        <span class="cm-msg" id="token-msg"></span>
+      </div>
+      <p style="font-size:.76rem;color:var(--muted);margin-top:.75rem;">Token is saved in your browser's local storage. If you clear browser data, you'll need to re-enter it.</p>
+    </div>
+    <div class="box">
+      <h2>About Content Storage</h2>
+      <p style="font-size:.84rem;color:var(--muted);line-height:1.8;">
+        📝 <strong>Blog posts</strong> are saved as <code>.md</code> files in <code>docs/_data/blog/</code><br/>
+        ⭐ <strong>Products</strong> are saved as <code>.json</code> files in <code>docs/_data/resources/</code><br/>
+        🖼️ <strong>Photos</strong> are stored in <code>docs/photos/</code><br/>
+        ⚡ Changes go live within <strong>1–2 minutes</strong> after saving (GitHub Pages rebuild)
+      </p>
+    </div>
+  </div>
 
 </main>
 </div><!-- /.content-wrap -->
@@ -921,6 +1137,412 @@ document.querySelectorAll('.sb-btn[data-tab]').forEach(btn => {
   });
 });
 
+// Switch to a content-manager tab from dropdown buttons
+function switchToTab(tabName) {
+  document.querySelectorAll('.sb-btn[data-tab]').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+  if (tabName === 'blog')    loadBlogPosts();
+  if (tabName === 'products') loadProducts();
+  if (tabName === 'cms-settings' && getCMSToken()) {
+    document.getElementById('gh-token-input').placeholder = '••••••• (token already saved)';
+  }
+}
+
+// ─────────────────────────────────────────
+// GITHUB CMS — API
+// ─────────────────────────────────────────
+const GH_REPO   = 'inclusive-materials/inclusive.materials';
+const GH_BRANCH = 'main';
+function getCMSToken() { return localStorage.getItem('im_gh_token') || ''; }
+
+async function ghCMS(path, method = 'GET', body = null) {
+  const token = getCMSToken();
+  const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (body) headers['Content-Type'] = 'application/json';
+  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+    method, headers, body: body ? JSON.stringify(body) : null
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `GitHub error ${res.status}`);
+  return data;
+}
+async function cmsListFiles(dir) {
+  const r = await ghCMS(`${dir}?ref=${GH_BRANCH}`);
+  return Array.isArray(r) ? r : [];
+}
+async function cmsReadFile(path) {
+  const f = await ghCMS(`${path}?ref=${GH_BRANCH}`);
+  return { content: decodeURIComponent(escape(atob(f.content.replace(/\n/g,'')))), sha: f.sha };
+}
+async function cmsWriteFile(path, content, message, sha = null) {
+  const body = { message, content: btoa(unescape(encodeURIComponent(content))), branch: GH_BRANCH };
+  if (sha) body.sha = sha;
+  return ghCMS(path, 'PUT', body);
+}
+async function cmsRemoveFile(path, message, sha) {
+  return ghCMS(path, 'DELETE', { message, sha, branch: GH_BRANCH });
+}
+
+// ── Helpers ──
+function slugifyCMS(s) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+function todayDT() { const d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
+function showCMSMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = `cm-msg cm-msg--${type} show`;
+  if (type === 'ok') setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── Photos ──
+let cmsPhotos = [];
+async function loadCMSPhotos() {
+  try {
+    const files = await cmsListFiles('docs/photos');
+    cmsPhotos = files.filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name)).map(f => f.name);
+  } catch { cmsPhotos = []; }
+}
+function renderPhotoGrid(gridId, inputId) {
+  const grid = document.getElementById(gridId);
+  if (!cmsPhotos.length) { grid.innerHTML = ''; return; }
+  grid.innerHTML = cmsPhotos.map(name =>
+    `<img src="/photos/${name}" class="photo-thumb" title="${name}"
+      onclick="selectPhoto('${inputId}','${gridId}','/photos/${name}',this)" />`
+  ).join('');
+}
+function selectPhoto(inputId, gridId, path, el) {
+  document.getElementById(inputId).value = path;
+  document.querySelectorAll(`#${gridId} .photo-thumb`).forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── Frontmatter ──
+function parseFm(text) {
+  const raw = (text || '').replace(/^﻿/, '');
+  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (!m) return { meta: {}, body: raw };
+  const meta = {};
+  m[1].split(/\r?\n/).forEach(line => {
+    const idx = line.indexOf(':'); if (idx === -1) return;
+    let k = line.slice(0,idx).trim(), v = line.slice(idx+1).trim();
+    if ((v.startsWith('"')&&v.endsWith('"'))||(v.startsWith("'")&&v.endsWith("'"))) v = v.slice(1,-1);
+    if (v === 'true') v = true; if (v === 'false') v = false;
+    meta[k] = v;
+  });
+  return { meta, body: m[2] || '' };
+}
+function buildBlogMd({ title, date, summary, image, published, body }) {
+  return `---\ntitle: ${JSON.stringify(title)}\ndate: ${JSON.stringify(date)}\nsummary: ${JSON.stringify(summary||'')}\nimage: ${JSON.stringify(image||'')}\npublished: ${!!published}\n---\n\n${body||''}`;
+}
+
+// ════════════════════════════════
+// BLOG POSTS
+// ════════════════════════════════
+let blogEditSha = null, blogEditPath = null;
+
+function autoBlogSlug() {
+  if (!blogEditPath) {
+    const title = document.getElementById('bf-title').value;
+    const date  = (document.getElementById('bf-date').value || todayDT()).slice(0,10);
+    document.getElementById('bf-slug').value = `${date}-${slugifyCMS(title)}`;
+  }
+}
+
+document.getElementById('new-post-btn').addEventListener('click', () => {
+  blogEditSha = null; blogEditPath = null;
+  ['bf-title','bf-date','bf-slug','bf-summary','bf-image','bf-body'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = id === 'bf-date' ? todayDT() : '';
+  });
+  document.getElementById('bf-published').checked = true;
+  document.getElementById('blog-preview').style.display = 'none';
+  document.getElementById('blog-form-title').textContent = 'New Blog Post';
+  document.getElementById('blog-msg').className = 'cm-msg';
+  renderPhotoGrid('bf-photo-grid', 'bf-image');
+  document.getElementById('blog-form-box').style.display = 'block';
+  document.getElementById('bf-title').focus();
+  document.getElementById('blog-form-box').scrollIntoView({ behavior:'smooth' });
+});
+
+function cancelBlogForm() {
+  document.getElementById('blog-form-box').style.display = 'none';
+  blogEditSha = null; blogEditPath = null;
+}
+function toggleBlogPreview() {
+  const el = document.getElementById('blog-preview');
+  el.innerHTML = (typeof marked !== 'undefined' ? marked.parse : (s=>s))(document.getElementById('bf-body').value || '*Nothing to preview yet.*');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+document.getElementById('save-post-btn').addEventListener('click', async () => {
+  const title = document.getElementById('bf-title').value.trim();
+  const date  = document.getElementById('bf-date').value;
+  const slug  = document.getElementById('bf-slug').value.trim() || `${date.slice(0,10)}-${slugifyCMS(title)}`;
+  const summary = document.getElementById('bf-summary').value.trim();
+  const image   = document.getElementById('bf-image').value.trim();
+  const body    = document.getElementById('bf-body').value;
+  const published = document.getElementById('bf-published').checked;
+  if (!title || !date) { showCMSMsg('blog-msg','Title and date are required.','err'); return; }
+  if (!getCMSToken())  { showCMSMsg('blog-msg','No GitHub token — open CMS Settings.','err'); return; }
+  const filename = slug.endsWith('.md') ? slug : `${slug}.md`;
+  const path = `docs/_data/blog/${filename}`;
+  const content = buildBlogMd({ title, date: new Date(date).toISOString(), summary, image, published, body });
+  showCMSMsg('blog-msg','Saving…','info');
+  try {
+    await cmsWriteFile(path, content, `${blogEditSha ? 'Update' : 'Add'} blog post: ${title}`, blogEditSha);
+    showCMSMsg('blog-msg','✓ Post saved! Site updates in ~1 min.','ok');
+    cancelBlogForm(); loadBlogPosts();
+  } catch(e) { showCMSMsg('blog-msg',`Error: ${e.message}`,'err'); }
+});
+
+window.editPost = async function(path) {
+  showCMSMsg('blog-msg','Loading…','info');
+  document.getElementById('blog-form-box').style.display = 'block';
+  document.getElementById('blog-form-box').scrollIntoView({ behavior:'smooth' });
+  try {
+    const { content, sha } = await cmsReadFile(path);
+    const { meta, body } = parseFm(content);
+    blogEditSha = sha; blogEditPath = path;
+    document.getElementById('bf-title').value   = meta.title || '';
+    const dt = meta.date ? new Date(meta.date) : new Date();
+    dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+    document.getElementById('bf-date').value    = dt.toISOString().slice(0,16);
+    document.getElementById('bf-slug').value    = path.split('/').pop().replace(/\.md$/,'');
+    document.getElementById('bf-summary').value = meta.summary || '';
+    document.getElementById('bf-image').value   = meta.image || '';
+    document.getElementById('bf-body').value    = body;
+    document.getElementById('bf-published').checked = meta.published !== false;
+    document.getElementById('blog-form-title').textContent = 'Edit Blog Post';
+    document.getElementById('blog-preview').style.display = 'none';
+    document.getElementById('blog-msg').className = 'cm-msg';
+    renderPhotoGrid('bf-photo-grid', 'bf-image');
+  } catch(e) { showCMSMsg('blog-msg',`Error loading: ${e.message}`,'err'); }
+};
+
+window.deletePost = async function(path, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  if (!getCMSToken()) { alert('No GitHub token — open CMS Settings.'); return; }
+  try {
+    const { sha } = await cmsReadFile(path);
+    await cmsRemoveFile(path, `Delete blog post: ${title}`, sha);
+    loadBlogPosts();
+  } catch(e) { alert(`Error: ${e.message}`); }
+};
+
+async function loadBlogPosts() {
+  const el = document.getElementById('blog-list');
+  if (!getCMSToken()) {
+    el.innerHTML = '<div class="cm-empty">⚠️ No GitHub token — open <strong>CMS Settings</strong> to add one.</div>'; return;
+  }
+  el.innerHTML = '<div class="cm-empty">Loading…</div>';
+  try {
+    const files = await cmsListFiles('docs/_data/blog');
+    const mdFiles = files.filter(f => f.name.endsWith('.md')).reverse();
+    if (!mdFiles.length) { el.innerHTML = '<div class="cm-empty">No blog posts yet. Click "+ New Post" to create one.</div>'; return; }
+    const posts = await Promise.all(mdFiles.map(async f => {
+      try {
+        const { content } = await cmsReadFile(`docs/_data/blog/${f.name}`);
+        const { meta } = parseFm(content);
+        return { name: f.name, path: `docs/_data/blog/${f.name}`, title: meta.title || f.name, date: meta.date || '', published: meta.published !== false };
+      } catch { return { name: f.name, path: `docs/_data/blog/${f.name}`, title: f.name, date: '', published: true }; }
+    }));
+    el.innerHTML = posts.map(p => `
+      <div class="item">
+        <div class="item__info">
+          <div class="item__title">${p.title}</div>
+          <div class="item__meta">${p.date ? new Date(p.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—'} &nbsp;·&nbsp; ${p.published ? '<span style="color:#16a34a">Published</span>' : '<span style="color:#9ca3af">Draft</span>'}</div>
+        </div>
+        <div class="item__actions">
+          <button class="btn btn--outline btn--sm" onclick="editPost('${p.path}')">Edit</button>
+          <button class="btn btn--danger btn--sm" onclick="deletePost('${p.path}','${p.title.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    if (e.message === 'Not Found' || e.message.includes('404')) {
+      el.innerHTML = '<div class="cm-empty">No blog posts yet. Click "+ New Post" to create one.</div>';
+    } else { el.innerHTML = `<div class="cm-empty">Error: ${e.message}</div>`; }
+  }
+}
+
+// ════════════════════════════════
+// PRODUCTS
+// ════════════════════════════════
+let prodEditSha = null, prodEditPath = null;
+
+document.getElementById('pf-upload').addEventListener('change', async function() {
+  const file = this.files[0]; if (!file) return;
+  if (!getCMSToken()) { document.getElementById('upload-status').textContent = '⚠ No token — open CMS Settings.'; return; }
+  const status = document.getElementById('upload-status');
+  status.textContent = 'Uploading…';
+  try {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result.split(',')[1];
+      const path = `docs/photos/${file.name}`;
+      let sha = null;
+      try { sha = (await ghCMS(`${path}?ref=${GH_BRANCH}`)).sha; } catch {}
+      const body = { message: `Upload image: ${file.name}`, content: base64, branch: GH_BRANCH };
+      if (sha) body.sha = sha;
+      await ghCMS(path, 'PUT', body);
+      document.getElementById('pf-image').value = `/photos/${file.name}`;
+      status.textContent = `✓ Uploaded: ${file.name}`;
+      await loadCMSPhotos();
+      renderPhotoGrid('pf-photo-grid', 'pf-image');
+    };
+    reader.onerror = () => { status.textContent = '⚠ Failed to read file.'; };
+    reader.readAsDataURL(file);
+  } catch(e) { status.textContent = `⚠ Upload failed: ${e.message}`; }
+});
+
+function resetTagCheckboxes() { ['tag-ot','tag-speech','tag-sped','tag-general'].forEach(id => document.getElementById(id).checked = false); }
+function getTagsValue() {
+  const checked = ['tag-ot','tag-speech','tag-sped','tag-general'].filter(id => document.getElementById(id).checked).map(id => document.getElementById(id).value);
+  return checked.length ? checked.join(' ') : 'all';
+}
+function setTagCheckboxes(audienceStr) {
+  resetTagCheckboxes();
+  if (!audienceStr || audienceStr === 'all') return;
+  audienceStr.split(/\s+/).forEach(v => { const el = document.getElementById('tag-' + v.trim()); if (el) el.checked = true; });
+}
+
+document.getElementById('new-product-btn').addEventListener('click', () => {
+  prodEditSha = null; prodEditPath = null;
+  ['pf-title','pf-desc','pf-price','pf-original-price','pf-image','pf-url','pf-search-tags'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pf-badge').value    = 'Featured';
+  document.getElementById('pf-level').value    = '';
+  document.getElementById('pf-category').value = 'all';
+  document.getElementById('pf-featured').checked = true;
+  document.getElementById('upload-status').textContent = '';
+  resetTagCheckboxes();
+  document.getElementById('product-msg').className = 'cm-msg';
+  document.getElementById('product-form-title').textContent = 'New Product';
+  renderPhotoGrid('pf-photo-grid', 'pf-image');
+  document.getElementById('product-form-box').style.display = 'block';
+  document.getElementById('pf-title').focus();
+  document.getElementById('product-form-box').scrollIntoView({ behavior:'smooth' });
+});
+
+function cancelProductForm() {
+  document.getElementById('product-form-box').style.display = 'none';
+  resetTagCheckboxes(); prodEditSha = null; prodEditPath = null;
+}
+
+document.getElementById('save-product-btn').addEventListener('click', async () => {
+  const title = document.getElementById('pf-title').value.trim();
+  const description = document.getElementById('pf-desc').value.trim();
+  const price = document.getElementById('pf-price').value.trim();
+  const originalPrice = document.getElementById('pf-original-price').value.trim();
+  const badge = document.getElementById('pf-badge').value;
+  const level = document.getElementById('pf-level').value;
+  const image = document.getElementById('pf-image').value.trim();
+  const url   = document.getElementById('pf-url').value.trim();
+  const audience = getTagsValue();
+  const category = document.getElementById('pf-category').value;
+  const featured = document.getElementById('pf-featured').checked;
+  const searchTags = document.getElementById('pf-search-tags').value.trim();
+  if (!title || !price || !url) { showCMSMsg('product-msg','Title, price and shop link are required.','err'); return; }
+  if (!getCMSToken()) { showCMSMsg('product-msg','No GitHub token — open CMS Settings.','err'); return; }
+  const filename = prodEditPath ? prodEditPath.split('/').pop() : `${slugifyCMS(title)}.json`;
+  const path = `docs/_data/resources/${filename}`;
+  const payload = { title, description, price };
+  if (originalPrice) payload.originalPrice = originalPrice;
+  if (level) payload.level = level;
+  Object.assign(payload, { badge, image, url, featured, audience, category, searchTags });
+  showCMSMsg('product-msg','Saving…','info');
+  try {
+    await cmsWriteFile(path, JSON.stringify(payload, null, 2), `${prodEditSha ? 'Update' : 'Add'} product: ${title}`, prodEditSha);
+    showCMSMsg('product-msg','✓ Product saved! Site updates in ~1 min.','ok');
+    cancelProductForm(); loadProducts();
+  } catch(e) { showCMSMsg('product-msg',`Error: ${e.message}`,'err'); }
+});
+
+window.editProduct = async function(path) {
+  showCMSMsg('product-msg','Loading…','info');
+  document.getElementById('product-form-box').style.display = 'block';
+  document.getElementById('product-form-box').scrollIntoView({ behavior:'smooth' });
+  try {
+    const { content, sha } = await cmsReadFile(path);
+    const p = JSON.parse(content);
+    prodEditSha = sha; prodEditPath = path;
+    document.getElementById('pf-title').value          = p.title || '';
+    document.getElementById('pf-desc').value           = p.description || '';
+    document.getElementById('pf-price').value          = p.price || '';
+    document.getElementById('pf-original-price').value = p.originalPrice || '';
+    document.getElementById('pf-badge').value          = p.badge || 'Featured';
+    document.getElementById('pf-level').value          = p.level || '';
+    document.getElementById('pf-image').value          = p.image || '';
+    document.getElementById('pf-url').value            = p.url || '';
+    document.getElementById('pf-category').value       = p.category || 'all';
+    document.getElementById('pf-featured').checked     = p.featured !== false;
+    document.getElementById('pf-search-tags').value    = p.searchTags || '';
+    document.getElementById('upload-status').textContent = '';
+    setTagCheckboxes(p.audience || '');
+    document.getElementById('product-form-title').textContent = 'Edit Product';
+    document.getElementById('product-msg').className = 'cm-msg';
+    renderPhotoGrid('pf-photo-grid', 'pf-image');
+  } catch(e) { showCMSMsg('product-msg',`Error loading: ${e.message}`,'err'); }
+};
+
+window.deleteProduct = async function(path, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  if (!getCMSToken()) { alert('No GitHub token — open CMS Settings.'); return; }
+  try {
+    const { sha } = await cmsReadFile(path);
+    await cmsRemoveFile(path, `Delete product: ${title}`, sha);
+    loadProducts();
+  } catch(e) { alert(`Error: ${e.message}`); }
+};
+
+async function loadProducts() {
+  const el = document.getElementById('product-list');
+  if (!getCMSToken()) {
+    el.innerHTML = '<div class="cm-empty">⚠️ No GitHub token — open <strong>CMS Settings</strong> to add one.</div>'; return;
+  }
+  el.innerHTML = '<div class="cm-empty">Loading…</div>';
+  try {
+    const files = await cmsListFiles('docs/_data/resources');
+    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+    if (!jsonFiles.length) { el.innerHTML = '<div class="cm-empty">No products yet. Click "+ New Product" to add one.</div>'; return; }
+    const products = await Promise.all(jsonFiles.map(async f => {
+      try {
+        const { content } = await cmsReadFile(`docs/_data/resources/${f.name}`);
+        const p = JSON.parse(content);
+        return { name: f.name, path: `docs/_data/resources/${f.name}`, title: p.title || f.name, price: p.price || '', featured: p.featured !== false };
+      } catch { return { name: f.name, path: `docs/_data/resources/${f.name}`, title: f.name, price: '', featured: true }; }
+    }));
+    el.innerHTML = products.map(p => `
+      <div class="item">
+        <div class="item__info">
+          <div class="item__title">${p.title}</div>
+          <div class="item__meta">${p.price} &nbsp;·&nbsp; ${p.featured ? '<span style="color:#16a34a">Featured on homepage</span>' : 'Not featured'}</div>
+        </div>
+        <div class="item__actions">
+          <button class="btn btn--outline btn--sm" onclick="editProduct('${p.path}')">Edit</button>
+          <button class="btn btn--danger btn--sm" onclick="deleteProduct('${p.path}','${p.title.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    if (e.message === 'Not Found' || e.message.includes('404')) {
+      el.innerHTML = '<div class="cm-empty">No products yet. Click "+ New Product" to add one.</div>';
+    } else { el.innerHTML = `<div class="cm-empty">Error: ${e.message}</div>`; }
+  }
+}
+
+// ── CMS Token ──
+document.getElementById('save-token-btn').addEventListener('click', () => {
+  const t = document.getElementById('gh-token-input').value.trim();
+  if (!t) { showCMSMsg('token-msg','Please enter a token.','err'); return; }
+  localStorage.setItem('im_gh_token', t);
+  document.getElementById('gh-token-input').value = '';
+  document.getElementById('gh-token-input').placeholder = '••••••• (token already saved)';
+  showCMSMsg('token-msg','✓ Token saved!','ok');
+});
+document.getElementById('clear-token-btn').addEventListener('click', () => {
+  if (!confirm('Remove saved GitHub token?')) return;
+  localStorage.removeItem('im_gh_token');
+  document.getElementById('gh-token-input').placeholder = 'github_pat_…';
+  showCMSMsg('token-msg','Token cleared.','cm-msg--info');
+});
+
 // ── Content Manager dropdown ──
 function toggleContentMenu() {
   const menu = document.getElementById('content-submenu');
@@ -936,6 +1558,8 @@ function toggleContentMenu() {
 document.getElementById('sale-date').value = todayStr();
 renderOverview();
 renderSales();
+// Pre-load photos for the CMS photo pickers (non-blocking)
+loadCMSPhotos().then(() => { renderPhotoGrid('bf-photo-grid','bf-image'); renderPhotoGrid('pf-photo-grid','pf-image'); });
 </script>
 </div><!-- end dashboard-root -->
 </body>
