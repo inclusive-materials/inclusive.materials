@@ -686,6 +686,11 @@
 // ══════════════════════════════════════════
 (function () {
 
+  // Track the active audience/tag so we can re-apply the filter after
+  // CMS products finish loading (they arrive async, AFTER URL-param filtering runs)
+  var currentAudience = 'all';
+  var currentTag = '';
+
   // Toggle specialty sections
   document.querySelectorAll('.sidebar-specialty-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -747,6 +752,8 @@
   }
 
   function filterProducts(audience, tag) {
+    currentAudience = audience || 'all';
+    currentTag = tag || '';
     var cards = document.querySelectorAll('.product-card');
     var any = false;
     cards.forEach(function (card) {
@@ -774,6 +781,13 @@
       p.classList.toggle('active', p.getAttribute('data-value') === cat);
     });
   }
+
+  // Expose the filter re-applicator so the cms:shop-ready handler (outside this scope) can call it
+  window._reapplyShopFilter = function () {
+    if (currentAudience !== 'all' || currentTag) {
+      filterProducts(currentAudience, currentTag);
+    }
+  };
 
 })();
 
@@ -817,11 +831,16 @@ function hideEmptyCategories() {
   });
 }
 
-// Run immediately (for static products already in HTML)
+// Run immediately (static products already in HTML — now a no-op since grid starts empty)
 hideEmptyCategories();
 
-// Re-run when CMS products finish loading
-document.addEventListener('cms:shop-ready', hideEmptyCategories);
+// When CMS products finish loading:
+//  1. Hide sidebar categories that have no matching products
+//  2. Re-apply the active audience/tag filter so ?cat=ot (and sidebar clicks) are respected
+document.addEventListener('cms:shop-ready', function () {
+  hideEmptyCategories();
+  if (window._reapplyShopFilter) window._reapplyShopFilter();
+});
 </script>
 </body>
 </html>
