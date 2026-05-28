@@ -158,6 +158,7 @@
       category: raw.category || 'all',
       searchTags: raw.searchTags || '',
       originalPrice: raw.originalPrice || '',
+      level: raw.level || '',
     };
   }
 
@@ -240,6 +241,9 @@
       var catLabel = cat.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
       tagsHtml += '<span style="' + chipStyle + ' ' + chipBase + '">' + escapeHtml(catLabel) + '</span>';
     }
+    if (r.level) {
+      tagsHtml += '<span style="background:#E3F2FD; color:#1565C0; ' + chipBase + '">' + escapeHtml(r.level) + '</span>';
+    }
     tagsHtml += '</div>';
 
     // ── Price (formatted, with optional strikethrough original price) ────────
@@ -261,6 +265,7 @@
       '<div class="product-card"' +
       ' data-audience="' + escapeHtml(aud) + '"' +
       ' data-category="' + escapeHtml(cat) + '"' +
+      ' data-level="' + escapeHtml(String(r.level || '').toLowerCase()) + '"' +
       ' data-title="' + escapeHtml(titleLower) + '"' +
       ' data-tags="' + escapeHtml(searchTags) + '"' +
       ' style="background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.08);">' +

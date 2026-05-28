@@ -278,6 +278,16 @@
             <option value="General Ed">General Ed</option>
           </select>
         </div>
+        <div class="field">
+          <label>Level <span style="font-weight:400;color:#9ca3af;font-size:0.8rem;">(optional — shows as a pill on card)</span></label>
+          <select id="pf-level">
+            <option value="">— No Level —</option>
+            <option value="Level 1">Level 1</option>
+            <option value="Level 2">Level 2</option>
+            <option value="Level 3">Level 3</option>
+            <option value="Level 4">Level 4</option>
+          </select>
+        </div>
       </div>
 
       <div class="field">
@@ -814,6 +824,7 @@ document.getElementById('new-product-btn').addEventListener('click', () => {
   prodEditSha = null; prodEditPath = null;
   ['pf-title','pf-desc','pf-price','pf-original-price','pf-image','pf-url','pf-search-tags'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('pf-badge').value = 'Featured';
+  document.getElementById('pf-level').value = '';
   document.getElementById('pf-category').value = 'all';
   document.getElementById('pf-featured').checked = true;
   document.getElementById('upload-status').textContent = '';
@@ -838,6 +849,7 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   const price = document.getElementById('pf-price').value.trim();
   const originalPrice = document.getElementById('pf-original-price').value.trim();
   const badge = document.getElementById('pf-badge').value;
+  const level = document.getElementById('pf-level').value;
   const image = document.getElementById('pf-image').value.trim();
   const url = document.getElementById('pf-url').value.trim();
   const audience = getTagsValue();
@@ -852,6 +864,7 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   const path = `docs/_data/resources/${filename}`;
   const payload = { title, description, price };
   if (originalPrice) payload.originalPrice = originalPrice;
+  if (level) payload.level = level;
   Object.assign(payload, { badge, image, url, featured, audience, category, searchTags });
   const content = JSON.stringify(payload, null, 2);
 
@@ -877,6 +890,7 @@ window.editProduct = async function(path) {
     document.getElementById('pf-price').value = p.price || '';
     document.getElementById('pf-original-price').value = p.originalPrice || '';
     document.getElementById('pf-badge').value = p.badge || 'Featured';
+    document.getElementById('pf-level').value = p.level || '';
     document.getElementById('pf-image').value = p.image || '';
     document.getElementById('pf-url').value = p.url || '';
     document.getElementById('pf-category').value = p.category || 'all';
