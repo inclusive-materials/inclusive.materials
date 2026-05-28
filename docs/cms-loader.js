@@ -590,7 +590,8 @@
       })
       .join('');
     if (html) {
-      grid.innerHTML = html;
+      // Prepend CMS products before the existing static products (don't replace them)
+      grid.insertAdjacentHTML('afterbegin', html);
       document.dispatchEvent(new CustomEvent('cms:shop-ready'));
     }
   }
