@@ -156,6 +156,7 @@
       featured: raw.featured !== false,
       audience: raw.audience || 'all',
       category: raw.category || 'all',
+      searchTags: raw.searchTags || '',
     };
   }
 
@@ -184,6 +185,7 @@
         escapeHtml(r.badge || 'Resource') +
         '</span></div>';
     }
+    var searchTags = String(r.searchTags || '').toLowerCase();
     return (
       '<div class="product-card" data-audience="' +
       escapeHtml(aud) +
@@ -191,6 +193,8 @@
       escapeHtml(cat) +
       '" data-title="' +
       escapeHtml(titleLower) +
+      '" data-tags="' +
+      escapeHtml(searchTags) +
       '">' +
       '<div class="product-card__img">' +
       imgInner +

@@ -428,6 +428,12 @@
         <input type="text" id="pf-url" placeholder="https://payhip.com/b/XXXXX" />
       </div>
 
+      <div class="field" style="margin-top:.75rem;">
+        <label>Search Tags <span style="font-weight:400;color:#9ca3af;">(paste keywords buyers would search for)</span></label>
+        <textarea id="pf-search-tags" rows="3" placeholder="e.g. speech language SLP articulation picture word cards initial medial final word positions early developing sounds p b m toddler preschool printable ages 3-5" style="width:100%;padding:.5rem .65rem;border:1px solid #e5e7eb;border-radius:6px;font-size:.875rem;font-family:inherit;resize:vertical;outline:none;line-height:1.5;"></textarea>
+        <p style="font-size:.75rem;color:#9ca3af;margin-top:.25rem;">These are hidden from buyers but help with search & filtering. Include product type, audience, sounds/skills, age range, level, etc.</p>
+      </div>
+
       <hr />
       <div class="field field--row">
         <label class="tog"><input type="checkbox" id="pf-featured" checked /><span class="tog-s"></span></label>
@@ -785,7 +791,7 @@ function setTagCheckboxes(audienceStr) {
 
 document.getElementById('new-product-btn').addEventListener('click', () => {
   prodEditSha = null; prodEditPath = null;
-  ['pf-title','pf-desc','pf-image','pf-url'].forEach(id => document.getElementById(id).value = '');
+  ['pf-title','pf-desc','pf-image','pf-url','pf-search-tags'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('pf-price').value = '';
   document.getElementById('pf-badge').value = 'Featured';
   document.getElementById('pf-category').value = 'all';
@@ -816,13 +822,14 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   const audience = getTagsValue();
   const category = document.getElementById('pf-category').value;
   const featured = document.getElementById('pf-featured').checked;
+  const searchTags = document.getElementById('pf-search-tags').value.trim();
 
   if (!title || !price || !url) { showMsg('product-msg', 'Title, price and shop link are required.', 'err'); return; }
   if (!getToken()) { showMsg('product-msg', 'No GitHub token — go to Settings tab.', 'err'); return; }
 
   const filename = prodEditPath ? prodEditPath.split('/').pop() : `${slugify(title)}.json`;
   const path = `docs/_data/resources/${filename}`;
-  const content = JSON.stringify({ title, description, price, badge, image, url, featured, audience, category }, null, 2);
+  const content = JSON.stringify({ title, description, price, badge, image, url, featured, audience, category, searchTags }, null, 2);
 
   showMsg('product-msg', 'Saving…', 'info');
   try {
@@ -849,6 +856,7 @@ window.editProduct = async function(path) {
     document.getElementById('pf-url').value = p.url || '';
     document.getElementById('pf-category').value = p.category || 'all';
     document.getElementById('pf-featured').checked = p.featured !== false;
+    document.getElementById('pf-search-tags').value = p.searchTags || '';
     document.getElementById('upload-status').textContent = '';
     setTagCheckboxes(p.audience || '');
     document.getElementById('product-form-title').textContent = 'Edit Product';
