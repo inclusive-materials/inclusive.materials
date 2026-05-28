@@ -160,62 +160,100 @@
     };
   }
 
+  function formatPrice(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return '';
+    if (s.charAt(0) === '$') return s;
+    var n = parseFloat(s);
+    if (isNaN(n)) return s;
+    return '$' + n.toFixed(2);
+  }
+
   function buildProductCard(resource, opts) {
     var r = normalizeResource(resource);
     if (!r || !r.title) return '';
-    var imgInner = SVG_PLACEHOLDER;
-    if (r.image) {
-      imgInner =
-        '<img src="' +
-        escapeHtml(r.image) +
-        '" alt="' +
-        escapeHtml(r.title) +
-        '" loading="lazy" style="width:100%;height:220px;object-fit:cover;object-position:top;display:block;"/>';
-    }
-    var badgeHtml = r.badge
-      ? '<span class="product-card__badge">' + escapeHtml(r.badge) + '</span>'
-      : '';
+
     var aud = String(r.audience || 'all').toLowerCase().trim();
     var cat = String(r.category || 'all').toLowerCase().trim();
     var titleLower = r.title.toLowerCase();
-    var tagsHtml = '';
-    if (opts && opts.includeTags !== false) {
-      tagsHtml =
-        '<div class="product-card__tags"><span class="tag">' +
-        escapeHtml(r.badge || 'Resource') +
-        '</span></div>';
-    }
     var searchTags = String(r.searchTags || '').toLowerCase();
+
+    // ── Image (with object-position:top) ──────────────────────────────────
+    var imgHtml;
+    if (r.image) {
+      imgHtml =
+        '<img src="' + escapeHtml(r.image) + '" alt="' + escapeHtml(r.title) +
+        '" loading="lazy" style="width:100%; height:220px; object-fit:cover; object-position:top; display:block;" />';
+    } else {
+      imgHtml =
+        '<div style="width:100%; height:220px; background:#f0f7f3; display:flex; align-items:center; justify-content:center; color:#90a89a;">' +
+        SVG_PLACEHOLDER + '</div>';
+    }
+
+    // ── Badge — absolutely positioned over image ───────────────────────────
+    var badgeHtml = '';
+    if (r.badge) {
+      var bl = r.badge.toLowerCase();
+      var bColor = (bl === 'bundle' || bl === 'sale') ? '#E53935'
+                 : (bl === 'featured' || bl === 'popular' || bl === 'best seller') ? '#F9A825'
+                 : '#00897B';
+      badgeHtml =
+        '<span style="position:absolute; top:10px; left:10px; background:' + bColor +
+        '; color:#fff; font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:20px;">' +
+        escapeHtml(r.badge) + '</span>';
+    }
+
+    // ── Audience / category tag chips ──────────────────────────────────────
+    var audLabel, chipStyle;
+    if (aud === 'speech') {
+      audLabel = 'Speech &amp; Language';
+      chipStyle = 'background:#E8F5E9; color:#2E7D32;';
+    } else if (aud === 'ot') {
+      audLabel = 'OT';
+      chipStyle = 'background:#E0F2F1; color:#00695C;';
+    } else if (aud === 'sped') {
+      audLabel = 'SPED';
+      chipStyle = 'background:#FFF3E0; color:#E65100;';
+    } else {
+      audLabel = 'General Education';
+      chipStyle = 'background:#F3E5F5; color:#6A1B9A;';
+    }
+    var chipBase = 'font-size:0.7rem; font-weight:600; padding:3px 8px; border-radius:12px;';
+    var tagsHtml = '<div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">' +
+      '<span style="' + chipStyle + ' ' + chipBase + '">' + audLabel + '</span>';
+    if (cat && cat !== 'all') {
+      var catLabel = cat.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+      tagsHtml += '<span style="' + chipStyle + ' ' + chipBase + '">' + escapeHtml(catLabel) + '</span>';
+    }
+    tagsHtml += '</div>';
+
+    // ── Price (formatted) ─────────────────────────────────────────────────
+    var priceHtml =
+      '<span style="font-size:1.2rem; font-weight:700; color:#1C4A30;">' +
+      escapeHtml(formatPrice(r.price)) + '</span>';
+
     return (
-      '<div class="product-card" data-audience="' +
-      escapeHtml(aud) +
-      '" data-category="' +
-      escapeHtml(cat) +
-      '" data-title="' +
-      escapeHtml(titleLower) +
-      '" data-tags="' +
-      escapeHtml(searchTags) +
-      '">' +
-      '<div class="product-card__img">' +
-      imgInner +
+      '<div class="product-card"' +
+      ' data-audience="' + escapeHtml(aud) + '"' +
+      ' data-category="' + escapeHtml(cat) + '"' +
+      ' data-title="' + escapeHtml(titleLower) + '"' +
+      ' data-tags="' + escapeHtml(searchTags) + '"' +
+      ' style="background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.08);">' +
+      '<div style="position:relative;">' +
+      imgHtml +
       badgeHtml +
       '</div>' +
-      '<div class="product-card__body">' +
+      '<div style="padding:16px;">' +
       tagsHtml +
-      '<h3>' +
-      escapeHtml(r.title) +
-      '</h3>' +
-      '<p>' +
-      escapeHtml(r.description) +
-      '</p>' +
-      '<div class="product-card__footer">' +
-      '<span class="product-card__price">' +
-      escapeHtml(r.price) +
-      '</span>' +
-      '<a href="' +
-      escapeHtml(r.url) +
-      '" class="btn btn--amber">Buy Now ↗</a>' +
-      '</div></div></div>'
+      '<h3 style="font-size:1rem; font-weight:700; color:#1C4A30; margin-bottom:6px; line-height:1.4;">' + escapeHtml(r.title) + '</h3>' +
+      '<p style="font-size:0.85rem; color:#546E7A; margin-bottom:12px; line-height:1.5;">' + escapeHtml(r.description) + '</p>' +
+      '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+      priceHtml +
+      '<a href="' + escapeHtml(r.url) + '" target="_blank"' +
+      ' style="background:#1C4A30; color:#fff; padding:8px 16px; border-radius:8px; font-size:0.85rem; font-weight:600; text-decoration:none;">Buy Now ↗</a>' +
+      '</div>' +
+      '</div>' +
+      '</div>'
     );
   }
 
