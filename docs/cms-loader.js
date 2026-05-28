@@ -211,7 +211,7 @@
       var origVal = parseFloat(String(r.originalPrice).replace(/[^0-9.]/g, ''));
       var saleVal = parseFloat(String(r.price).replace(/[^0-9.]/g, ''));
       if (!isNaN(origVal) && !isNaN(saleVal) && origVal > saleVal) {
-        var savePct = Math.round((origVal - saleVal) / origVal * 100);
+        var savePct = Math.floor((origVal - saleVal) / origVal * 100);
         badgeHtml +=
           '<span style="position:absolute; top:10px; right:10px; background:#F9A825; color:#fff; font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:20px;">' +
           'Save ' + savePct + '%</span>';
