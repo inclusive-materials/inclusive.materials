@@ -663,7 +663,11 @@
         var container = document.getElementById('blog-listing-container');
         if (!container || !posts.length) return;
         var html = posts.map(blogRowHtml).join('');
-        if (html) container.innerHTML = html;
+        if (html) {
+          container.innerHTML = html;
+          var skeleton = document.getElementById('blog-skeleton');
+          if (skeleton) skeleton.remove();
+        }
       });
     } else if (base === 'blog-post.html' || base === 'blog-post') {
       loadBlogArticlePage();
