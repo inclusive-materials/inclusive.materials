@@ -30,6 +30,8 @@
 
 /* ── Sidebar ──────────────────────────── */
 .shop-sidebar {
+  opacity: 0;
+  transition: opacity 0.25s ease;
   width: 224px;
   flex-shrink: 0;
   position: sticky;
@@ -842,6 +844,9 @@ hideEmptyCategories();
 document.addEventListener('cms:shop-ready', function () {
   hideEmptyCategories();
   if (window._reapplyShopFilter) window._reapplyShopFilter();
+  // Fade in sidebar only after empty categories are hidden — no flash
+  var sb = document.querySelector('.shop-sidebar');
+  if (sb) sb.style.opacity = '1';
 });
 </script>
 </body>
