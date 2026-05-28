@@ -434,19 +434,13 @@
   }
 
   async function loadBlogFilenames() {
-    var gh = await loadBlogFilenamesFromGithub();
+    // Manifest is the canonical source (updated by CI on every push).
+    // Only fall back to the GitHub API if the manifest is unavailable or empty,
+    // so a rename never produces duplicates while the API cache catches up.
     var man = await loadBlogFilenamesFromManifest();
-    var seen = {};
-    var out = [];
-    function add(n) {
-      if (!n || seen[n]) return;
-      seen[n] = true;
-      out.push(n);
-    }
-    gh.forEach(add);
-    man.forEach(add);
-    out.sort();
-    return out;
+    if (man.length) return man;
+    var gh = await loadBlogFilenamesFromGithub();
+    return gh;
   }
 
   async function loadResources() {
