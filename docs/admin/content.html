@@ -241,8 +241,14 @@
       <div class="fg2">
         <div class="field">
           <label>Price *</label>
-          <input type="text" id="pf-price" placeholder="$4.99" />
+          <input type="text" id="pf-price" placeholder="4.99" />
         </div>
+        <div class="field">
+          <label>Original Price <span style="font-weight:400;color:#9ca3af;font-size:0.8rem;">(optional — for discount display)</span></label>
+          <input type="text" id="pf-original-price" placeholder="e.g. 17.90 — leave blank if no discount" />
+        </div>
+      </div>
+      <div class="fg2" style="margin-top:0;">
         <div class="field">
           <label>Badge</label>
           <select id="pf-badge">
@@ -791,8 +797,7 @@ function setTagCheckboxes(audienceStr) {
 
 document.getElementById('new-product-btn').addEventListener('click', () => {
   prodEditSha = null; prodEditPath = null;
-  ['pf-title','pf-desc','pf-image','pf-url','pf-search-tags'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('pf-price').value = '';
+  ['pf-title','pf-desc','pf-price','pf-original-price','pf-image','pf-url','pf-search-tags'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('pf-badge').value = 'Featured';
   document.getElementById('pf-category').value = 'all';
   document.getElementById('pf-featured').checked = true;
@@ -816,6 +821,7 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   const title = document.getElementById('pf-title').value.trim();
   const description = document.getElementById('pf-desc').value.trim();
   const price = document.getElementById('pf-price').value.trim();
+  const originalPrice = document.getElementById('pf-original-price').value.trim();
   const badge = document.getElementById('pf-badge').value;
   const image = document.getElementById('pf-image').value.trim();
   const url = document.getElementById('pf-url').value.trim();
@@ -829,7 +835,10 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
 
   const filename = prodEditPath ? prodEditPath.split('/').pop() : `${slugify(title)}.json`;
   const path = `docs/_data/resources/${filename}`;
-  const content = JSON.stringify({ title, description, price, badge, image, url, featured, audience, category, searchTags }, null, 2);
+  const payload = { title, description, price };
+  if (originalPrice) payload.originalPrice = originalPrice;
+  Object.assign(payload, { badge, image, url, featured, audience, category, searchTags });
+  const content = JSON.stringify(payload, null, 2);
 
   showMsg('product-msg', 'Saving…', 'info');
   try {
@@ -851,6 +860,7 @@ window.editProduct = async function(path) {
     document.getElementById('pf-title').value = p.title || '';
     document.getElementById('pf-desc').value = p.description || '';
     document.getElementById('pf-price').value = p.price || '';
+    document.getElementById('pf-original-price').value = p.originalPrice || '';
     document.getElementById('pf-badge').value = p.badge || 'Featured';
     document.getElementById('pf-image').value = p.image || '';
     document.getElementById('pf-url').value = p.url || '';

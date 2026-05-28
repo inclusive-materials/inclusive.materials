@@ -157,6 +157,7 @@
       audience: raw.audience || 'all',
       category: raw.category || 'all',
       searchTags: raw.searchTags || '',
+      originalPrice: raw.originalPrice || '',
     };
   }
 
@@ -205,6 +206,17 @@
         '; color:#fff; font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:20px;">' +
         escapeHtml(r.badge) + '</span>';
     }
+    // Add "Save X%" badge top-right when an original price is set
+    if (r.originalPrice) {
+      var origVal = parseFloat(String(r.originalPrice).replace(/[^0-9.]/g, ''));
+      var saleVal = parseFloat(String(r.price).replace(/[^0-9.]/g, ''));
+      if (!isNaN(origVal) && !isNaN(saleVal) && origVal > saleVal) {
+        var savePct = Math.round((origVal - saleVal) / origVal * 100);
+        badgeHtml +=
+          '<span style="position:absolute; top:10px; right:10px; background:#F9A825; color:#fff; font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:20px;">' +
+          'Save ' + savePct + '%</span>';
+      }
+    }
 
     // ── Audience / category tag chips ──────────────────────────────────────
     var audLabel, chipStyle;
@@ -230,10 +242,20 @@
     }
     tagsHtml += '</div>';
 
-    // ── Price (formatted) ─────────────────────────────────────────────────
-    var priceHtml =
-      '<span style="font-size:1.2rem; font-weight:700; color:#1C4A30;">' +
-      escapeHtml(formatPrice(r.price)) + '</span>';
+    // ── Price (formatted, with optional strikethrough original price) ────────
+    var priceHtml;
+    var origFormatted = formatPrice(r.originalPrice);
+    if (origFormatted) {
+      priceHtml =
+        '<div style="display:flex; flex-direction:column; line-height:1.2;">' +
+        '<span style="font-size:0.8rem; color:#9e9e9e; text-decoration:line-through;">' + escapeHtml(origFormatted) + '</span>' +
+        '<span style="font-size:1.2rem; font-weight:700; color:#1C4A30;">' + escapeHtml(formatPrice(r.price)) + '</span>' +
+        '</div>';
+    } else {
+      priceHtml =
+        '<span style="font-size:1.2rem; font-weight:700; color:#1C4A30;">' +
+        escapeHtml(formatPrice(r.price)) + '</span>';
+    }
 
     return (
       '<div class="product-card"' +
