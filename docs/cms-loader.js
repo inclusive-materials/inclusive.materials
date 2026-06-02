@@ -473,6 +473,7 @@
   async function loadResources() {
     var names = await loadResourceFilesList();
     if (!names.length) return [];
+    names = names.slice().reverse();
     var resources = [];
     for (var i = 0; i < names.length; i++) {
       var path = '/_data/resources/' + encodeURIComponent(names[i]);
