@@ -480,7 +480,7 @@
       if (json && typeof json === 'object') resources.push(json);
     }
     resources.sort(function (a, b) {
-      return (b.dateAdded || '').localeCompare(a.dateAdded || '');
+      return (b.createdAt || '').localeCompare(a.createdAt || '');
     });
     return resources;
   }
