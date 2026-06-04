@@ -1522,7 +1522,7 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   if (originalPrice) payload.originalPrice = originalPrice;
   if (level) payload.level = level;
   Object.assign(payload, { badge, image, url, featured, audience, category, searchTags });
-  if (!prodEditSha) payload.createdAt = new Date().toISOString().slice(0, 10);
+  if (!prodEditSha) payload.createdAt = new Date().toISOString();
   showCMSMsg('product-msg','Saving…','info');
   try {
     await cmsWriteFile(path, JSON.stringify(payload, null, 2), `${prodEditSha ? 'Update' : 'Add'} product: ${title}`, prodEditSha);
