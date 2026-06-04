@@ -1379,11 +1379,15 @@ document.getElementById('pf-upload').addEventListener('change', async function()
     try {
       const base64 = reader.result.split(',')[1];
       const path = `docs/photos/${file.name}`;
-      let sha = null;
-      try { sha = (await ghCMS(`${path}?ref=${GH_BRANCH}`)).sha; } catch {}
       const body = { message: `Upload image: ${file.name}`, content: base64, branch: GH_BRANCH };
-      if (sha) body.sha = sha;
-      await ghCMS(path, 'PUT', body);
+      try {
+        await ghCMS(path, 'PUT', body);
+      } catch(e) {
+        if (e.message && e.message.includes('"sha"')) {
+          body.sha = (await ghCMS(`${path}?ref=${GH_BRANCH}`)).sha;
+          await ghCMS(path, 'PUT', body);
+        } else { throw e; }
+      }
       document.getElementById('pf-image').value = `/photos/${file.name}`;
       status.textContent = `✓ Uploaded: ${file.name}`;
       await loadCMSPhotos();
