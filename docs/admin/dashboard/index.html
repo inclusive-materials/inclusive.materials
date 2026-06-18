@@ -1472,14 +1472,23 @@ document.getElementById('pf-upload').addEventListener('change', async function()
     const reader = new FileReader();
     reader.onload = async () => {
       const base64 = reader.result.split(',')[1];
-      const path = `docs/photos/${file.name}`;
+      // Sanitize filename: replace dashes/spaces/special chars with hyphens, lowercase
+      const ext = file.name.replace(/.*\./, '').toLowerCase();
+      const safeName = file.name
+        .replace(/\.[^.]+$/, '')                   // strip extension
+        .toLowerCase()
+        .replace(/[–—]/g, '-')            // en/em dash → hyphen
+        .replace(/[^a-z0-9]+/g, '-')               // spaces & special chars → hyphen
+        .replace(/^-+|-+$/g, '')                   // trim leading/trailing hyphens
+        + '.' + ext;
+      const path = `docs/photos/${safeName}`;
       let sha = null;
       try { sha = (await ghCMS(`${path}?ref=${GH_BRANCH}`)).sha; } catch {}
-      const body = { message: `Upload image: ${file.name}`, content: base64, branch: GH_BRANCH };
+      const body = { message: `Upload image: ${safeName}`, content: base64, branch: GH_BRANCH };
       if (sha) body.sha = sha;
       await ghCMS(path, 'PUT', body);
-      document.getElementById('pf-image').value = `/photos/${file.name}`;
-      status.textContent = `✓ Uploaded: ${file.name}`;
+      document.getElementById('pf-image').value = `/photos/${safeName}`;
+      status.textContent = `✓ Uploaded: ${safeName}`;
       await loadCMSPhotos();
       renderPhotoGrid('pf-photo-grid', 'pf-image');
     };
