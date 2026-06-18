@@ -496,7 +496,7 @@
         <div class="field"><label>Slug (filename) *</label><input type="text" id="bf-slug" placeholder="auto-generated" /></div>
       </div>
       <div class="field"><label>Summary (shown in blog listings)</label><textarea id="bf-summary" rows="2" placeholder="A short 1–2 sentence description..."></textarea></div>
-      <div class="field"><label>Cover Image Path</label><input type="text" id="bf-image" placeholder="/photos/your-image.jpg" /></div>
+      <div class="field"><label>Cover Image Path</label><input type="text" id="bf-image" placeholder="/photos/your-image.jpg" /><p style="font-size:.75rem;color:#9ca3af;margin-top:.3rem;">Use lowercase letters, numbers, and hyphens only — no spaces, no special characters (e.g. <code style="font-size:.72rem;background:#f3f4f6;padding:1px 4px;border-radius:3px;">my-image-name.jpg</code>).</p></div>
       <div id="bf-photo-grid" class="photo-grid"></div>
       <hr style="border:none;border-top:1px solid var(--border);margin:1.1rem 0;" />
       <div class="field"><label>Article Body (Markdown)</label><textarea id="bf-body" rows="16" placeholder="Write your article here in Markdown...&#10;&#10;## Heading&#10;&#10;Your paragraph text."></textarea></div>
@@ -593,6 +593,7 @@
       <div class="field">
         <label>Cover Image</label>
         <input type="text" id="pf-image" placeholder="/photos/your-image.png" />
+        <p style="font-size:.75rem;color:#9ca3af;margin-top:.3rem;">Use lowercase letters, numbers, and hyphens only — no spaces, no special characters (e.g. <code style="font-size:.72rem;background:#f3f4f6;padding:1px 4px;border-radius:3px;">my-product-name.png</code>).</p>
         <div style="display:flex;align-items:center;gap:.6rem;margin-top:.5rem;flex-wrap:wrap;">
           <label class="btn btn--teal btn--sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;">⬆ Upload Image <input type="file" id="pf-upload" accept="image/*" style="display:none;" /></label>
           <span id="upload-status" style="font-size:.78rem;color:var(--muted);"></span>
