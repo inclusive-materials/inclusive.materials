@@ -44,6 +44,7 @@ jobs:
           )
 
           def shorten(desc, title):
+              import time
               payload = json.dumps({
                   "contents": [{
                       "parts": [{"text": f"{PROMPT}\n\nTitle: {title}\nDescription: {desc}"}]
@@ -51,10 +52,17 @@ jobs:
                   "generationConfig": {"maxOutputTokens": 120, "temperature": 0.3}
               }).encode()
               url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
-              req = urllib.request.Request(url, data=payload, headers={"content-type": "application/json"})
-              with urllib.request.urlopen(req) as r:
-                  data = json.loads(r.read())
-              return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+              for attempt in range(3):
+                  try:
+                      req = urllib.request.Request(url, data=payload, headers={"content-type": "application/json"})
+                      with urllib.request.urlopen(req) as r:
+                          data = json.loads(r.read())
+                      return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                  except urllib.error.HTTPError as e:
+                      if e.code == 429 and attempt < 2:
+                          time.sleep(10 * (attempt + 1))
+                      else:
+                          raise
 
           changed = False
           for path in files:
