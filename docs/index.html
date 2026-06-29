@@ -111,48 +111,55 @@
 
 <!-- ═══════════════════════════════════════════ WHAT WE OFFER -->
 <style>
-.wwo-section { background: var(--surface); padding: 80px 24px; }
-.wwo-wrap { max-width: 1060px; margin: 0 auto; }
-.wwo-heading { text-align: center; margin-bottom: 60px; }
-.wwo-heading h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 12px; }
-.wwo-heading p { color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+/* ── Shared band styles ── */
+.wwo-band { padding: 72px 24px; }
+.wwo-band--dark    { background: var(--green-dark); }
+.wwo-band--pale    { background: var(--green-pale); }
+.wwo-band--surface { background: var(--surface); }
+.wwo-inner { max-width: 1060px; margin: 0 auto; }
 
-/* ── Section label row ── */
-.wwo-block { margin-bottom: 64px; }
-.wwo-block:last-child { margin-bottom: 0; }
-.wwo-label-row {
-  display: flex;
+/* ── Band header ── */
+.wwo-band-header { text-align: center; margin-bottom: 48px; }
+.wwo-band-eyebrow {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--green-pale);
-}
-.wwo-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.wwo-label-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.wwo-label span {
-  font-size: 0.78rem;
+  gap: 8px;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text);
+  letter-spacing: 0.1em;
+  margin-bottom: 14px;
+  padding: 5px 14px;
+  border-radius: 20px;
 }
-.wwo-view-all {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--green-dark);
+.wwo-band--dark .wwo-band-eyebrow  { background: rgba(255,255,255,0.15); color: #fff; }
+.wwo-band--pale .wwo-band-eyebrow  { background: var(--green-dark); color: #fff; }
+.wwo-band--surface .wwo-band-eyebrow { background: var(--green-pale); color: var(--green-dark); }
+
+.wwo-band-header h2 { font-size: clamp(1.6rem, 2.8vw, 2.1rem); margin-bottom: 10px; }
+.wwo-band--dark .wwo-band-header h2 { color: #fff; }
+.wwo-band--pale .wwo-band-header h2 { color: var(--green-dark); }
+.wwo-band--surface .wwo-band-header h2 { color: var(--text); }
+
+.wwo-band-header p { font-size: 0.9rem; max-width: 480px; margin: 0 auto; }
+.wwo-band--dark .wwo-band-header p    { color: rgba(255,255,255,0.75); }
+.wwo-band--pale .wwo-band-header p    { color: var(--green-dark); opacity: 0.8; }
+.wwo-band--surface .wwo-band-header p { color: var(--text-muted); }
+
+.wwo-band-header a.wwo-cta {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 11px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 700;
   text-decoration: none;
-  white-space: nowrap;
+  transition: opacity 0.2s, transform 0.15s;
 }
-.wwo-view-all:hover { color: var(--green-light); }
+.wwo-band-header a.wwo-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+.wwo-band--dark    a.wwo-cta { background: #fff; color: var(--green-dark); }
+.wwo-band--pale    a.wwo-cta { background: var(--green-dark); color: #fff; }
+.wwo-band--surface a.wwo-cta { background: var(--green-dark); color: #fff; }
 
 /* ── Services grid ── */
 .wwo-services-grid {
@@ -161,138 +168,136 @@
   gap: 20px;
 }
 .wwo-service-card {
-  background: var(--bg);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: var(--radius);
-  padding: 28px 24px;
-  box-shadow: var(--shadow);
+  padding: 32px 26px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  border-top: 3px solid var(--green-dark);
-  transition: box-shadow 0.2s, transform 0.2s;
+  gap: 14px;
+  transition: background 0.2s, transform 0.2s;
 }
-.wwo-service-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.wwo-service-card:hover { background: rgba(255,255,255,0.16); transform: translateY(-2px); }
 .wwo-service-card__icon {
-  width: 44px; height: 44px;
-  background: var(--green-pale);
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,0.2);
   border-radius: var(--radius-sm);
   display: flex; align-items: center; justify-content: center;
-  color: var(--green-light);
+  color: #fff;
 }
-.wwo-service-card h3 { font-size: 1rem; }
-.wwo-service-card p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; flex: 1; }
-.wwo-service-card a { font-size: 0.82rem; font-weight: 600; color: var(--green-dark); text-decoration: none; }
-.wwo-service-card a:hover { color: var(--green-light); }
+.wwo-service-card h3 { font-size: 1.05rem; color: #fff; }
+.wwo-service-card p  { font-size: 0.85rem; color: rgba(255,255,255,0.75); line-height: 1.65; flex: 1; }
+.wwo-service-card a  {
+  font-size: 0.82rem; font-weight: 700; color: #fff;
+  text-decoration: none; opacity: 0.85;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.wwo-service-card a:hover { opacity: 1; }
 
 /* ── Article card ── */
 .wwo-article-card {
-  background: var(--bg);
+  background: #fff;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
   display: grid;
-  grid-template-columns: 320px 1fr;
-  transition: box-shadow 0.2s;
+  grid-template-columns: 340px 1fr;
+  text-decoration: none;
+  transition: box-shadow 0.2s, transform 0.2s;
 }
-.wwo-article-card:hover { box-shadow: var(--shadow-md); }
+.wwo-article-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.14); transform: translateY(-2px); }
 .wwo-article-card img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
-.wwo-article-body { padding: 28px 32px; display: flex; flex-direction: column; gap: 12px; }
+.wwo-article-body { padding: 32px 36px; display: flex; flex-direction: column; gap: 14px; }
 .wwo-article-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 .wwo-article-tags span {
   background: #E0F2F1; color: #00695C;
-  font-size: 0.7rem; font-weight: 600;
-  padding: 3px 8px; border-radius: 12px;
+  font-size: 0.7rem; font-weight: 700;
+  padding: 3px 9px; border-radius: 12px;
 }
-.wwo-article-body h3 { font-size: 1.2rem; line-height: 1.4; color: var(--text); }
-.wwo-article-body p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; flex: 1; }
+.wwo-article-body h3 { font-size: 1.25rem; line-height: 1.4; color: var(--text); }
+.wwo-article-body p  { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; flex: 1; }
+.wwo-article-body .read-link { font-size: 0.85rem; font-weight: 700; color: var(--green-dark); }
 
 @media (max-width: 860px) {
   .wwo-services-grid { grid-template-columns: 1fr; }
-  .wwo-article-card { grid-template-columns: 1fr; }
-  .wwo-article-card img { height: 200px; }
+  .wwo-article-card  { grid-template-columns: 1fr; }
+  .wwo-article-card img { height: 210px; }
 }
 </style>
 
-<section class="wwo-section">
-  <div class="wwo-wrap">
-    <div class="wwo-heading">
-      <h2>What We Offer</h2>
-      <p>From expert services to downloadable resources and practical articles — everything designed to help every learner thrive.</p>
+<!-- ── BAND 1: EXPERT SERVICES (dark green bg) ── -->
+<section class="wwo-band wwo-band--dark">
+  <div class="wwo-inner">
+    <div class="wwo-band-header">
+      <div class="wwo-band-eyebrow">Expert Services</div>
+      <h2>Personalized support from a specialist</h2>
+      <p>One-on-one sessions, coaching, and direct intervention — all tailored to the learner's needs.</p>
+      <a href="/services/" class="wwo-cta">Explore All Services →</a>
     </div>
-
-    <!-- 1. EXPERT SERVICES -->
-    <div class="wwo-block">
-      <div class="wwo-label-row">
-        <div class="wwo-label">
-          <span class="wwo-label-dot" style="background:var(--green-dark);"></span>
-          <span>Expert Services</span>
+    <div class="wwo-services-grid">
+      <div class="wwo-service-card">
+        <div class="wwo-service-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
         </div>
-        <a href="/services/" class="wwo-view-all">View all services →</a>
+        <h3>Consultation</h3>
+        <p>One-on-one expert sessions for IEP planning, learner assessments, and classroom strategies tailored to your situation.</p>
+        <a href="/services/#consultation">Book a Session →</a>
       </div>
-      <div class="wwo-services-grid">
-        <div class="wwo-service-card">
-          <div class="wwo-service-card__icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>Consultation</h3>
-          <p>One-on-one expert sessions for IEP planning, learner assessments, and classroom strategies tailored to your situation.</p>
-          <a href="/services/#consultation">Book a Session →</a>
+      <div class="wwo-service-card">
+        <div class="wwo-service-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
-        <div class="wwo-service-card">
-          <div class="wwo-service-card__icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <h3>Parent &amp; Teacher Coaching</h3>
-          <p>Ongoing coaching that builds your confidence and skills to better support the learners in your care.</p>
-          <a href="/services/#coaching">Start Coaching →</a>
+        <h3>Parent &amp; Teacher Coaching</h3>
+        <p>Ongoing coaching that builds your confidence and skills to better support the learners in your care.</p>
+        <a href="/services/#coaching">Start Coaching →</a>
+      </div>
+      <div class="wwo-service-card">
+        <div class="wwo-service-card__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <div class="wwo-service-card">
-          <div class="wwo-service-card__icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <h3>Intervention Support</h3>
-          <p>Direct, structured support with individualized plans, progress monitoring, and IEP-aligned strategies.</p>
-          <a href="/services/#intervention">Learn More →</a>
-        </div>
+        <h3>Intervention Support</h3>
+        <p>Direct, structured support with individualized plans, progress monitoring, and IEP-aligned strategies.</p>
+        <a href="/services/#intervention">Learn More →</a>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- 2. DIGITAL RESOURCES -->
-    <div class="wwo-block">
-      <div class="wwo-label-row">
-        <div class="wwo-label">
-          <span class="wwo-label-dot" style="background:var(--green-mid);"></span>
-          <span>Digital Resources</span>
-        </div>
-        <a href="/shop/" class="wwo-view-all">Browse all resources →</a>
-      </div>
-      <div id="featured-resources-container" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:20px;"></div>
+<!-- ── BAND 2: DIGITAL RESOURCES (pale green bg) ── -->
+<section class="wwo-band wwo-band--pale">
+  <div class="wwo-inner">
+    <div class="wwo-band-header">
+      <div class="wwo-band-eyebrow">Digital Resources</div>
+      <h2>Ready-to-use materials for every learner</h2>
+      <p>Printable activity packs, worksheets, and visual supports you can download and use right away.</p>
+      <a href="/shop/" class="wwo-cta">Browse All Resources →</a>
     </div>
+    <div id="featured-resources-container" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:20px;"></div>
+  </div>
+</section>
 
-    <!-- 3. ARTICLES & TIPS -->
-    <div class="wwo-block">
-      <div class="wwo-label-row">
-        <div class="wwo-label">
-          <span class="wwo-label-dot" style="background:var(--green-light);"></span>
-          <span>Articles &amp; Tips</span>
-        </div>
-        <a href="/blog/" class="wwo-view-all">View all articles →</a>
-      </div>
-      <a href="/blog-hand-strengthening-signs/" class="wwo-article-card" style="text-decoration:none;">
-        <img src="./photos/blog-hand-strengthening-hero.jpg" alt="5 Signs a Child Needs Hand Strengthening Activities" />
-        <div class="wwo-article-body">
-          <div class="wwo-article-tags">
-            <span>OT</span>
-            <span>Fine Motor</span>
-            <span>Hand Strengthening</span>
-          </div>
-          <h3>5 Signs a Child Needs Hand Strengthening Activities And What To Do About It</h3>
-          <p>Many children who avoid writing tasks are not being difficult. Their hands simply are not ready yet. Here are five signs to watch for and what actually helps.</p>
-          <span style="font-size:0.85rem; font-weight:600; color:var(--green-dark);">Read Article →</span>
-        </div>
-      </a>
+<!-- ── BAND 3: ARTICLES & TIPS (white bg) ── -->
+<section class="wwo-band wwo-band--surface">
+  <div class="wwo-inner">
+    <div class="wwo-band-header">
+      <div class="wwo-band-eyebrow">Articles &amp; Tips</div>
+      <h2>Evidence-informed reads for educators &amp; families</h2>
+      <p>Practical strategies on fine motor development, classroom adaptations, and sensory-friendly approaches.</p>
+      <a href="/blog/" class="wwo-cta">View All Articles →</a>
     </div>
-
+    <a href="/blog-hand-strengthening-signs/" class="wwo-article-card">
+      <img src="./photos/blog-hand-strengthening-hero.jpg" alt="5 Signs a Child Needs Hand Strengthening Activities" />
+      <div class="wwo-article-body">
+        <div class="wwo-article-tags">
+          <span>OT</span>
+          <span>Fine Motor</span>
+          <span>Hand Strengthening</span>
+        </div>
+        <h3>5 Signs a Child Needs Hand Strengthening Activities And What To Do About It</h3>
+        <p>Many children who avoid writing tasks are not being difficult. Their hands simply are not ready yet. Here are five signs to watch for and what actually helps.</p>
+        <span class="read-link">Read Article →</span>
+      </div>
+    </a>
   </div>
 </section>
 
