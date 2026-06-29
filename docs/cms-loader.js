@@ -1,5 +1,5 @@
 /**
- * Inclusive Materials — CMS content loader (Sveltia / Git-backed JSON & Markdown)
+ * Inclusive Intervention Hub — CMS content loader (Sveltia / Git-backed JSON & Markdown)
  * Fetches site root-relative paths under /_data/… Graceful no-op on 404 or errors.
  *
  * GitHub API (below) is only used to list filenames under docs/_data/resources and docs/_data/blog,
@@ -566,7 +566,7 @@
 
     var bodyHtml = renderMarked(parsed.body || '');
 
-    document.title = post.title + ' — Blog — Inclusive Materials';
+    document.title = post.title + ' — Blog — Inclusive Intervention Hub';
     var metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc && post.summary) metaDesc.setAttribute('content', post.summary);
 

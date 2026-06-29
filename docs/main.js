@@ -1,36 +1,47 @@
 /* ============================================================
-   Inclusive Materials — main.js
+   Inclusive Intervention Hub — main.js
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── Shop Dropdown ──────────────────────────────────────── */
-  const shopDropdown = document.getElementById('shopDropdown');
-  const dropdownToggle = shopDropdown?.querySelector('.navbar__dropdown-toggle');
+  /* ── Nav Dropdowns ──────────────────────────────────────── */
+  const navDropdowns = ['shopDropdown', 'servicesDropdown']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
 
-  if (dropdownToggle) {
-    dropdownToggle.addEventListener('click', (e) => {
+  navDropdowns.forEach(dropdown => {
+    const toggle = dropdown.querySelector('.navbar__dropdown-toggle');
+    if (!toggle) return;
+
+    toggle.addEventListener('click', (e) => {
       e.stopPropagation();
-      const isOpen = shopDropdown.classList.toggle('open');
-      dropdownToggle.setAttribute('aria-expanded', isOpen);
+      const isOpen = dropdown.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen);
+      // close sibling dropdowns
+      navDropdowns.forEach(d => {
+        if (d !== dropdown) {
+          d.classList.remove('open');
+          d.querySelector('.navbar__dropdown-toggle')?.setAttribute('aria-expanded', false);
+        }
+      });
     });
+  });
 
-    // Close on outside click
-    document.addEventListener('click', (e) => {
-      if (!shopDropdown.contains(e.target)) {
-        shopDropdown.classList.remove('open');
-        dropdownToggle.setAttribute('aria-expanded', false);
-      }
+  document.addEventListener('click', () => {
+    navDropdowns.forEach(d => {
+      d.classList.remove('open');
+      d.querySelector('.navbar__dropdown-toggle')?.setAttribute('aria-expanded', false);
     });
+  });
 
-    // Close on Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        shopDropdown.classList.remove('open');
-        dropdownToggle.setAttribute('aria-expanded', false);
-      }
-    });
-  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      navDropdowns.forEach(d => {
+        d.classList.remove('open');
+        d.querySelector('.navbar__dropdown-toggle')?.setAttribute('aria-expanded', false);
+      });
+    }
+  });
 
   /* ── Mobile Hamburger ───────────────────────────────────── */
   const hamburger = document.getElementById('hamburger');

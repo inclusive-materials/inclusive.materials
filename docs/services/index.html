@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1MGTYCXWQX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-1MGTYCXWQX');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services — Inclusive Intervention Hub</title>
+  <meta name="description" content="Expert consultation, parent and teacher coaching, and intervention support from Inclusive Intervention Hub." />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <style>
+    .services-hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+      color: #fff;
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .services-hero h1 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 16px; color: #fff; }
+    .services-hero p { font-size: 1.05rem; opacity: 0.88; max-width: 560px; margin: 0 auto 32px; line-height: 1.7; }
+
+    .service-section {
+      padding: 80px 24px;
+    }
+    .service-section:nth-child(even) { background: var(--surface); }
+
+    .service-block {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .service-block--reverse { direction: rtl; }
+    .service-block--reverse > * { direction: ltr; }
+
+    .service-block__visual {
+      background: linear-gradient(135deg, var(--green-pale) 0%, #d0ede0 100%);
+      border-radius: 20px;
+      height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-block__visual::before {
+      content: '';
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      background: rgba(61,176,138,0.15);
+      border-radius: 50%;
+      top: -30px;
+      right: -30px;
+    }
+    .service-block__icon {
+      width: 80px;
+      height: 80px;
+      background: #fff;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green-light);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    }
+
+    .service-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green-light);
+      margin-bottom: 10px;
+    }
+    .service-block__content h2 { font-size: clamp(1.6rem, 2.5vw, 2.1rem); margin-bottom: 16px; color: var(--text); }
+    .service-block__content p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 16px; }
+
+    .service-includes {
+      list-style: none;
+      margin: 20px 0 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .service-includes li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .service-includes li::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      background: var(--green-pale);
+      border-radius: 50%;
+      position: relative;
+    }
+    .service-includes li .check {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      background: var(--green-pale);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .service-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .faq-section { padding: 80px 24px; background: var(--bg); }
+    .faq-section h2 { text-align: center; font-size: clamp(1.6rem, 2.5vw, 2rem); margin-bottom: 40px; }
+    .faq-grid { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .faq-item {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      box-shadow: var(--shadow);
+    }
+    .faq-item h3 { font-family: var(--font-body); font-size: 0.98rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+    .faq-item p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; margin: 0; }
+
+    @media (max-width: 860px) {
+      .service-block { grid-template-columns: 1fr; gap: 32px; }
+      .service-block--reverse { direction: ltr; }
+      .service-block__visual { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ NAVBAR -->
+<header class="navbar">
+  <div class="navbar__inner">
+    <a href="/" class="navbar__logo">
+      <img class="navbar__logo-img" src="../photos/logo2.png" alt="" width="48" height="48" loading="eager" decoding="async" />
+      Inclusive Intervention Hub
+    </a>
+    <button class="navbar__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="navbar__nav" id="main-nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog/">Blog</a></li>
+      <li class="navbar__dropdown active" id="servicesDropdown">
+        <button class="navbar__dropdown-toggle" aria-expanded="false">
+          Services
+          <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="navbar__dropdown-menu">
+          <a href="/services/#consultation">Consultation</a>
+          <a href="/services/#coaching">Parent &amp; Teacher Coaching</a>
+          <a href="/services/#intervention">Intervention Support</a>
+        </div>
+      </li>
+      <li class="navbar__dropdown" id="shopDropdown">
+        <button class="navbar__dropdown-toggle" aria-expanded="false">
+          Shop
+          <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="navbar__dropdown-menu">
+          <a href="/shop/">All Resources</a>
+          <a href="/shop/?cat=sped">SPED</a>
+          <a href="/shop/?cat=ot">OT</a>
+          <a href="/shop/?cat=speech">Speech &amp; Language</a>
+          <a href="/shop/?cat=general">General Classroom</a>
+        </div>
+      </li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/contact/">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ SERVICES HERO -->
+<section class="services-hero">
+  <p class="section-label" style="color:rgba(255,255,255,0.7); margin-bottom:12px;">Expert Support</p>
+  <h1>Our Services</h1>
+  <p>Personalized, evidence-based support for learners, families, and professionals. Whether you need strategic guidance, ongoing coaching, or hands-on intervention — we're here.</p>
+  <a href="/contact/" class="btn btn--white">Book a Session →</a>
+</section>
+
+<!-- ═══════════════════════════════════════════ CONSULTATION -->
+<section class="service-section" id="consultation">
+  <div class="service-block">
+    <div class="service-block__visual">
+      <div class="service-block__icon">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <path d="M36 26a3.33 3.33 0 0 1-3.33 3.33H10L4 36V10a3.33 3.33 0 0 1 3.33-3.33h25.34A3.33 3.33 0 0 1 36 10v16z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M13 18h14M13 24h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="service-block__content">
+      <p class="service-label">Service 01</p>
+      <h2>Consultation</h2>
+      <p>One-on-one expert sessions tailored to your specific situation. Whether you're a parent navigating an IEP, a teacher building an inclusive classroom, or a therapist seeking a second opinion — our consultation service gives you direct access to specialist knowledge.</p>
+      <p>Each session is focused on your goals, your learner, and actionable next steps you can implement right away.</p>
+      <ul class="service-includes">
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          IEP planning &amp; goal-writing support
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Learner assessment interpretation
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Classroom and therapy strategy recommendations
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Program review and recommendations
+        </li>
+      </ul>
+      <div class="service-cta">
+        <a href="/contact/" class="btn btn--primary">Book a Consultation →</a>
+        <a href="/contact/" class="btn btn--outline">Ask a Question</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ COACHING -->
+<section class="service-section" id="coaching">
+  <div class="service-block service-block--reverse">
+    <div class="service-block__visual">
+      <div class="service-block__icon">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <path d="M26.67 35v-3.33A6.67 6.67 0 0 0 20 25H8.33a6.67 6.67 0 0 0-6.66 6.67V35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="14.17" cy="11.67" r="6.67" stroke="currentColor" stroke-width="2"/>
+          <path d="M35 35v-3.33a6.67 6.67 0 0 0-5-6.45M25 5.22a6.67 6.67 0 0 1 0 12.91" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="service-block__content">
+      <p class="service-label">Service 02</p>
+      <h2>Parent &amp; Teacher Coaching</h2>
+      <p>Practical, ongoing coaching sessions designed to build the confidence and skills of the adults closest to the learner. Coaching is not about theory — it's about giving you real tools you can use today, in the real environment where you work or live.</p>
+      <p>Whether you're a parent feeling overwhelmed or a teacher supporting a complex caseload, coaching gives you a consistent, knowledgeable partner by your side.</p>
+      <ul class="service-includes">
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Understanding your child's or student's specific needs
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Behavior management strategies and routines
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Communication and advocacy skills for parents
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Differentiated instruction techniques for educators
+        </li>
+      </ul>
+      <div class="service-cta">
+        <a href="/contact/" class="btn btn--primary">Start Coaching →</a>
+        <a href="/contact/" class="btn btn--outline">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ INTERVENTION SUPPORT -->
+<section class="service-section" id="intervention">
+  <div class="service-block">
+    <div class="service-block__visual">
+      <div class="service-block__icon">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <path d="M20 36.67S3.33 28.33 3.33 16.67V8.33l16.67-5 16.67 5v8.34C36.67 28.33 20 36.67 20 36.67z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M13.33 20l4.44 4.44 8.9-8.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="service-block__content">
+      <p class="service-label">Service 03</p>
+      <h2>Intervention Support</h2>
+      <p>Direct, structured support for learners who need more than a resource can provide. Intervention support means working alongside the child with a purposeful, evidence-based plan designed specifically for their needs and goals.</p>
+      <p>Progress is monitored at every stage, strategies are adjusted as the learner grows, and everything stays aligned with their IEP or individual learning plan.</p>
+      <ul class="service-includes">
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Individualized intervention plan development
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Fine motor, communication, and academic skill support
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          Ongoing progress monitoring and data collection
+        </li>
+        <li>
+          <span class="check">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          IEP-aligned goals and strategies
+        </li>
+      </ul>
+      <div class="service-cta">
+        <a href="/contact/" class="btn btn--primary">Get Intervention Support →</a>
+        <a href="/contact/" class="btn btn--outline">Ask a Question</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-grid">
+
+      <div class="faq-item">
+        <h3>Who are these services for?</h3>
+        <p>Our services are designed for parents of learners with diverse needs, classroom teachers and Special Education specialists, occupational therapists, speech-language pathologists, and other professionals working with children who have learning differences or developmental needs.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Are sessions held online or in person?</h3>
+        <p>Sessions are currently offered online via video call, making it accessible no matter where you are. In-person arrangements may be available depending on location — reach out through our contact page to discuss.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>How do I get started?</h3>
+        <p>Simply reach out through our <a href="/contact/" style="color:var(--green-dark); font-weight:600;">Contact page</a> with a brief description of what you're looking for. We'll get back to you within 1–3 business days to discuss next steps and schedule your first session.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>What is the difference between consultation and coaching?</h3>
+        <p>Consultation is a focused, typically one-time or short-term session where you come with specific questions or challenges and leave with expert guidance and a clear plan. Coaching is an ongoing partnership — regular sessions over weeks or months where we build your skills and adapt strategies together as the learner progresses.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3>Can I combine services with digital resources from the shop?</h3>
+        <p>Absolutely — many clients find that combining personalized services with our downloadable resources gives the best results. During consultation or coaching, we can recommend specific resources from the shop that are the right fit for your learner.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ CTA BANNER -->
+<section class="cta-banner">
+  <div class="container">
+    <h2>Not sure which service is right for you?</h2>
+    <p>Reach out and tell us about your learner — we'll help you find the best starting point.</p>
+    <div class="cta-banner__actions">
+      <a href="/contact/" class="btn btn--white">Get in Touch →</a>
+      <a href="/shop/" class="btn btn--ghost-white">Browse Resources</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <div class="footer__brand-logo">
+        <img class="footer__brand-mark" src="../photos/logo2.png" alt="" width="26" height="26" loading="lazy" decoding="async" />
+        Inclusive Intervention Hub
+      </div>
+      <p>Resources. Services. Real impact.<br/>Supporting OT, SLP, SPED, Educators, Parents &amp; Families.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul class="footer__links">
+        <li><a href="/blog/">Blog</a></li>
+        <li><a href="/services/">Services</a></li>
+        <li><a href="/shop/">Shop</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer__mission">
+      <h4>Mission</h4>
+      <p>Empowering educators, therapists, and families with expert services and practical resources — so every learner can reach their full potential.</p>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Inclusive Intervention Hub. All rights reserved.</span>
+    <nav class="footer__legal" aria-label="Legal policies">
+      <a href="/refund-policy/">Refund Policy</a>
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/terms-and-conditions/">Terms &amp; Conditions</a>
+    </nav>
+    <span>Made with care for educators, by educators.</span>
+  </div>
+</footer>
+
+<script src="../main.js"></script>
+</body>
+</html>
