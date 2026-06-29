@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — Inclusive Materials</title>
+  <title>Dashboard — Inclusive Intervention Hub</title>
   <script>
     // ── Password protection (SHA-256 hash) ──
     const HASH = '4d21fbba333628e24015e5bc0e04b0cdb22faf60038c77c2ef7a2032aecd2dc9';
@@ -232,7 +232,7 @@
 <div id="login-screen" style="display:none;position:fixed;inset:0;background:#F7F9F8;z-index:9999;align-items:center;justify-content:center;">
   <div style="background:white;border:1px solid #e5e7eb;border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,0.08);text-align:center;">
     <img src="/photos/logo2.png" alt="" width="56" height="56" style="border-radius:10px;margin-bottom:1rem;" />
-    <h2 style="font-size:1.15rem;font-weight:700;color:#1C4A30;margin-bottom:0.3rem;">Inclusive Materials</h2>
+    <h2 style="font-size:1.15rem;font-weight:700;color:#1C4A30;margin-bottom:0.3rem;">Inclusive Intervention Hub</h2>
     <p style="font-size:0.85rem;color:#6b7280;margin-bottom:1.5rem;">Admin Dashboard — Enter your password</p>
     <input id="login-pw" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')tryLogin()"
       style="width:100%;padding:0.65rem 0.9rem;border:1px solid #e5e7eb;border-radius:8px;font-size:0.95rem;outline:none;margin-bottom:0.75rem;box-sizing:border-box;" />
@@ -248,7 +248,7 @@
 <aside class="sidebar">
   <div class="sb-brand">
     <img src="/photos/logo2.png" alt="" width="32" height="32" />
-    <span class="sb-brand__name">Inclusive<br>Materials</span>
+    <span class="sb-brand__name">Inclusive<br>Intervention Hub</span>
   </div>
   <button class="mob-menu-btn" onclick="openMobMenu()" aria-label="Open menu">☰</button>
 
@@ -284,7 +284,7 @@
   <div class="mob-overlay-header">
     <div style="display:flex;align-items:center;gap:.75rem;">
       <img src="/photos/logo2.png" alt="" width="32" height="32" style="border-radius:7px;" />
-      <span style="font-size:.95rem;font-weight:700;color:#fff;">Inclusive Materials</span>
+      <span style="font-size:.95rem;font-weight:700;color:#fff;">Inclusive Intervention Hub</span>
     </div>
     <button class="mob-overlay-close" onclick="closeMobMenu()" aria-label="Close menu">✕</button>
   </div>
@@ -428,11 +428,11 @@
         </p>
         <ol class="setup-steps">
           <li>Go to <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a> — sign in with your Google account</li>
-          <li>Click the project dropdown at the top → <strong>New Project</strong> → name it <em>Inclusive Materials</em> → Create</li>
+          <li>Click the project dropdown at the top → <strong>New Project</strong> → name it <em>Inclusive Intervention Hub</em> → Create</li>
           <li>In the left menu go to <strong>APIs &amp; Services → Library</strong></li>
           <li>Search for <strong>Google Analytics Data API</strong> → click it → click <strong>Enable</strong></li>
           <li>Go to <strong>APIs &amp; Services → OAuth consent screen</strong> → choose <strong>External</strong> → Create</li>
-          <li>Fill in App name (<em>Inclusive Materials Dashboard</em>) and your email → Save and Continue through all steps</li>
+          <li>Fill in App name (<em>Inclusive Intervention Hub Dashboard</em>) and your email → Save and Continue through all steps</li>
           <li>Go to <strong>APIs &amp; Services → Credentials → + Create Credentials → OAuth client ID</strong></li>
           <li>Application type: <strong>Web application</strong></li>
           <li>Under <em>Authorized JavaScript origins</em>, add: <code>https://inclusivematerials.com</code></li>
@@ -636,7 +636,7 @@
       <ol class="cm-steps">
         <li>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank" style="color:var(--green);font-weight:600;">github.com → Settings → Developer Settings → Fine-grained tokens</a></li>
         <li>Click <strong>Generate new token</strong></li>
-        <li>Give it a name like <code>inclusive-materials-cms</code></li>
+        <li>Give it a name like <code>inclusive-intervention-hub-cms</code></li>
         <li>Under <strong>Repository access</strong> choose <strong>Only select repositories</strong> → pick <code>inclusive.materials</code></li>
         <li>Under <strong>Permissions → Repository permissions</strong> set <strong>Contents</strong> to <strong>Read and write</strong></li>
         <li>Click <strong>Generate token</strong> and copy it</li>
