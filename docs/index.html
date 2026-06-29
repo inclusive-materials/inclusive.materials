@@ -285,11 +285,7 @@
       // The price row is the last div in the card body — it contains price + Buy Now button.
       // Hide only the price element (first child), keep the Buy Now link.
       var rows = card.querySelectorAll('div[style*="justify-content:space-between"]');
-      rows.forEach(function (row) {
-        Array.from(row.children).forEach(function (child) {
-          if (child.tagName !== 'A') child.style.display = 'none';
-        });
-      });
+      rows.forEach(function (row) { row.style.display = 'none'; });
     });
   }
   var obs = new MutationObserver(function () { hidePrices(); });
