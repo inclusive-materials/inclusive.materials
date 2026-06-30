@@ -613,6 +613,10 @@
       </div>
       <hr style="border:none;border-top:1px solid var(--border);margin:1.1rem 0;" />
       <div class="field field--row">
+        <label class="tog"><input type="checkbox" id="pf-published" checked /><span class="tog-s"></span></label>
+        <label for="pf-published">Published (visible in shop)</label>
+      </div>
+      <div class="field field--row" style="margin-top:.5rem;">
         <label class="tog"><input type="checkbox" id="pf-featured" checked /><span class="tog-s"></span></label>
         <label for="pf-featured">Show on Homepage (Featured)</label>
       </div>
@@ -1520,6 +1524,7 @@ document.getElementById('new-product-btn').addEventListener('click', () => {
   document.getElementById('pf-badge').value    = '';
   document.getElementById('pf-level').value    = '';
   document.getElementById('pf-category').value = 'all';
+  document.getElementById('pf-published').checked = true;
   document.getElementById('pf-featured').checked = true;
   document.getElementById('upload-status').textContent = '';
   resetTagCheckboxes();
@@ -1548,6 +1553,7 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   const audience = getTagsValue();
   const category = document.getElementById('pf-category').value;
   const featured = document.getElementById('pf-featured').checked;
+  const published = document.getElementById('pf-published').checked;
   const searchTags = document.getElementById('pf-search-tags').value.trim();
   if (!title || !price || !url) { showCMSMsg('product-msg','Title, price and shop link are required.','err'); return; }
   if (!getCMSToken()) { showCMSMsg('product-msg','No GitHub token — open CMS Settings.','err'); return; }
@@ -1556,7 +1562,7 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   const payload = { title, description, price };
   if (originalPrice) payload.originalPrice = originalPrice;
   if (level) payload.level = level;
-  Object.assign(payload, { badge, image, url, featured, audience, category, searchTags });
+  Object.assign(payload, { badge, image, url, featured, published, audience, category, searchTags });
   if (!prodEditSha) {
     payload.createdAt = new Date().toISOString();
   } else {
@@ -1592,6 +1598,7 @@ window.editProduct = async function(path) {
     document.getElementById('pf-image').value          = p.image || '';
     document.getElementById('pf-url').value            = p.url || '';
     document.getElementById('pf-category').value       = p.category || 'all';
+    document.getElementById('pf-published').checked    = p.published !== false;
     document.getElementById('pf-featured').checked     = p.featured !== false;
     document.getElementById('pf-search-tags').value    = p.searchTags || '';
     document.getElementById('upload-status').textContent = '';
@@ -1652,8 +1659,8 @@ async function loadProducts() {
       try {
         const { content } = await cmsReadFile(`docs/_data/resources/${f.name}`);
         const p = JSON.parse(content);
-        return { name: f.name, path: `docs/_data/resources/${f.name}`, title: p.title || f.name, price: p.price || '', featured: p.featured !== false, createdAt: p.createdAt || '' };
-      } catch { return { name: f.name, path: `docs/_data/resources/${f.name}`, title: f.name, price: '', featured: true, createdAt: '' }; }
+        return { name: f.name, path: `docs/_data/resources/${f.name}`, title: p.title || f.name, price: p.price || '', featured: p.featured !== false, published: p.published !== false, createdAt: p.createdAt || '' };
+      } catch { return { name: f.name, path: `docs/_data/resources/${f.name}`, title: f.name, price: '', featured: true, published: true, createdAt: '' }; }
     }));
     products.sort((a, b) => {
       const d = (b.createdAt || '').localeCompare(a.createdAt || '');
@@ -1665,7 +1672,7 @@ async function loadProducts() {
       <div class="item product-list-item" data-search="${(p.title + ' ' + p.name).toLowerCase()}">
         <div class="item__info">
           <div class="item__title">${p.title}</div>
-          <div class="item__meta">${p.price} &nbsp;·&nbsp; ${p.createdAt ? `<span style="color:#6b7280">Added ${p.createdAt.slice(0,10)}</span> &nbsp;·&nbsp; ` : ''}${p.featured ? '<span style="color:#16a34a">Featured on homepage</span>' : 'Not featured'}</div>
+          <div class="item__meta">${p.price} &nbsp;·&nbsp; ${p.createdAt ? `<span style="color:#6b7280">Added ${p.createdAt.slice(0,10)}</span> &nbsp;·&nbsp; ` : ''}${p.published ? '<span style="color:#16a34a">Published</span>' : '<span style="color:#dc2626">Unpublished</span>'} &nbsp;·&nbsp; ${p.featured ? '<span style="color:#16a34a">Featured</span>' : 'Not featured'}</div>
         </div>
         <div class="item__actions">
           <button class="btn btn--outline btn--sm" onclick="editProduct('${p.path}')">Edit</button>

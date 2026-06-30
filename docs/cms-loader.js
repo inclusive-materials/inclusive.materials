@@ -493,7 +493,7 @@
           return (json && typeof json === 'object') ? Object.assign({ _filename: name }, json) : null;
         });
     }));
-    var resources = results.filter(Boolean);
+    var resources = results.filter(function(r) { return r && r.published !== false; });
     resources.sort(function (a, b) {
       var d = (b.createdAt || '').localeCompare(a.createdAt || '');
       if (d !== 0) return d;
