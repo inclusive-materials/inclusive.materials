@@ -704,7 +704,16 @@
 
   window.loadResourcesShopGrid = loadResourcesShopGrid;
 
+  async function syncResourcesNav() {
+    var dropdown = document.getElementById('shopDropdown');
+    if (!dropdown) return;
+    var resources = await loadResources();
+    if (!resources.length) dropdown.style.display = 'none';
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    syncResourcesNav();
+
     var path = window.location.pathname.replace(/\/+$/, '') || '/';
     var base = (path.split('/').pop() || '').toLowerCase();
 
