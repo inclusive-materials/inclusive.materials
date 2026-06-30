@@ -1563,16 +1563,15 @@ document.getElementById('save-product-btn').addEventListener('click', async () =
   if (originalPrice) payload.originalPrice = originalPrice;
   if (level) payload.level = level;
   Object.assign(payload, { badge, image, url, featured, published, audience, category, searchTags });
-  if (!prodEditSha) {
-    payload.createdAt = new Date().toISOString();
-  } else {
-    try { const { content: ec } = await cmsReadFile(prodEditPath); const ep = JSON.parse(ec); if (ep.createdAt) payload.createdAt = ep.createdAt; } catch {}
-  }
   showCMSMsg('product-msg','Saving…','info');
   try {
-    let saveSha = prodEditSha;
+    let saveSha = null;
     if (prodEditPath) {
-      try { saveSha = (await cmsReadFile(prodEditPath)).sha; } catch {}
+      const current = await cmsReadFile(prodEditPath);
+      saveSha = current.sha;
+      try { const ep = JSON.parse(current.content); if (ep.createdAt) payload.createdAt = ep.createdAt; } catch {}
+    } else {
+      payload.createdAt = new Date().toISOString();
     }
     await cmsWriteFile(path, JSON.stringify(payload, null, 2), `${saveSha ? 'Update' : 'Add'} product: ${title}`, saveSha);
     await updateResourceManifest(filename);
